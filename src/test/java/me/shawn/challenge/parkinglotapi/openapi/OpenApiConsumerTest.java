@@ -31,7 +31,7 @@ public class OpenApiConsumerTest {
     }
 
     @Test
-    void apiFetchTest() throws SizeLimitExceededException {
+    void apiFetchTest() {
         // GIVEN
         int rowStartAt = 1;
         int rowEndAt = 5;
@@ -48,7 +48,7 @@ public class OpenApiConsumerTest {
     }
 
     @Test
-    void maxSizeTest() throws SizeLimitExceededException {
+    void maxSizeTest() {
         // GIVEN
         String address = " ";
         StopWatch stopWatch = new StopWatch("maxSizeTest");
@@ -95,7 +95,7 @@ public class OpenApiConsumerTest {
     }
 
     @Test
-    void parkingCodeTest() throws SizeLimitExceededException {
+    void parkingCodeTest() {
         // GIVEN
         String parkingCode = "1033754";
 
@@ -113,7 +113,7 @@ public class OpenApiConsumerTest {
     }
 
     @Test
-    void serverErrorTest() throws SizeLimitExceededException {
+    void serverErrorTest() {
         // GIVEN
         int rowStartAt = 1;
         int rowEndAt = 1;
@@ -129,7 +129,7 @@ public class OpenApiConsumerTest {
     }
 
     @Test
-    void noDataTest() throws SizeLimitExceededException {
+    void noDataTest() {
         // GIVEN
         int rowStartAt = 1;
         int rowEndAt = 1;
@@ -164,7 +164,7 @@ public class OpenApiConsumerTest {
         String address = "서울";
 
         // WHEN and THEN
-        assertThrows(SizeLimitExceededException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             OpenApiResponse response = openApiConsumer.fetchApiData(OpenApiConsumer.PARK_API_NAME, rowStartAt, rowEndAt, address);
         });
     }

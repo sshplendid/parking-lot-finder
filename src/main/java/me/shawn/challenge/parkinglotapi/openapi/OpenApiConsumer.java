@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import javax.naming.SizeLimitExceededException;
@@ -17,6 +18,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
+@Component
 public class OpenApiConsumer {
     @NonNull
     private RestTemplate restTemplate;
@@ -42,11 +44,13 @@ public class OpenApiConsumer {
 
     /**
      * 주차장 정보를 주소로 검색한다.
+     * @param rowStartAt 검색하고자 하는 인덱스 시작위치
+     * @param rowEndAt 검색하고자 하는 인덱스 종료위치
      * @param address 구 혹은 동과 같은 주소. (e.g. 마포)
      * @return 검색 조건에 맞는 결과
-     * @throws SizeLimitExceededException 검색하고자 하는 조건이 1000 건을 초과하는 경우 발생한다.
+     * @throws IllegalArgumentException 검색하고자 하는 조건이 1000 건을 초과하는 경우 발생한다.
      */
-    public OpenApiResponse getParkInfoByAddress(int rowStartAt, int rowEndAt, String address) throws SizeLimitExceededException {
+    public OpenApiResponse getParkInfoByAddress(int rowStartAt, int rowEndAt, String address) {
         return this.fetchApiData(OpenApiConsumer.PARK_API_NAME, rowStartAt, rowEndAt, address);
     }
 
@@ -56,18 +60,19 @@ public class OpenApiConsumer {
      * @return 검색 조건에 맞는 결과
      * @throws SizeLimitExceededException 검색하고자 하는 조건이 1000 건을 초과하는 경우 발생한다.
      */
-    public OpenApiResponse getParkInfoByParkingCode(String parkingCode) throws SizeLimitExceededException {
+    public OpenApiResponse getParkInfoByParkingCode(String parkingCode) {
         return this.fetchApiData(OpenApiConsumer.PARK_API_NAME, 1, 1, OpenApiConsumer.EMPTY, parkingCode);
     }
 
-    OpenApiResponse fetchApiData(String apiName, int rowStartAt, int rowEndAt, String query1) throws SizeLimitExceededException {
+    OpenApiResponse fetchApiData(String apiName, int rowStartAt, int rowEndAt, String query1) {
         return this.fetchApiData(apiName, rowStartAt, rowEndAt, query1, EMPTY);
 
     }
-    OpenApiResponse fetchApiData(String apiName, int rowStartAt, int rowEndAt, String query1, String query2) throws SizeLimitExceededException {
+    OpenApiResponse fetchApiData(String apiName, int rowStartAt, int rowEndAt, String query1, String query2) {
         validateRequest(rowStartAt, rowEndAt);
 
         ResponseEntity<Map> responseEntity = restTemplate.exchange(apiEndpoint + API_PATH, HttpMethod.GET, null, Map.class, apiToken, apiName, rowStartAt, rowEndAt, query1, query2);
+        log.info("api url: {}", responseEntity.getBody().toString());
 
         if(responseEntity.getBody() != null && responseEntity.getBody().containsKey(RESULT) ) {
             String apiStatusCode = ((Map<String, String>) responseEntity.getBody().get(RESULT)).getOrDefault("CODE", "UNKNOWN");
@@ -94,9 +99,9 @@ public class OpenApiConsumer {
                 .build();
     }
 
-    private void validateRequest(int rowStartAt, int rowEndAt) throws SizeLimitExceededException {
+    private void validateRequest(int rowStartAt, int rowEndAt) {
         if ((rowEndAt - rowStartAt + 1) > 1000) {
-            throw new SizeLimitExceededException("SHN-429: API 요청 데이터의 크기는 1000 이하여야 합니다. size: " + (rowEndAt - rowStartAt + 1));
+            throw new IllegalArgumentException("SHN-429: API 요청 데이터의 크기는 1000 이하여야 합니다. size: " + (rowEndAt - rowStartAt + 1));
         }
         if (rowStartAt > rowEndAt) {
             throw new IllegalArgumentException("SHN-124: API 요청 시작위치는 요청 종료위치보다 작거나 같아야 합니다. rowStartAt: " + rowStartAt + ", rowEndAt: " + rowEndAt);

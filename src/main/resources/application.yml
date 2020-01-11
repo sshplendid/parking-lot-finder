@@ -5,16 +5,21 @@ spring:
     active: local
 
 common:
-  api-token: 6a756259796a756d32304559665677
+  open-api:
+    endpoint: http://openapi.seoul.go.kr:8088
+    token: 6a756259796a756d32304559665677
 
 ---
 # Local
 
+spring:
+  profiles: local
 
 ---
 # Dev
 
 spring:
+  profiles: dev
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: localhost:3306/parkinglot
