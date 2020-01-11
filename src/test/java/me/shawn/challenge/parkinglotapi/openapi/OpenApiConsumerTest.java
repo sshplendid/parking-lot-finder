@@ -1,30 +1,33 @@
 package me.shawn.challenge.parkinglotapi.openapi;
 
-import lombok.extern.slf4j.Slf4j;
+import me.shawn.challenge.parkinglotapi.openapi.model.OpenApiResponse;
+import me.shawn.challenge.parkinglotapi.openapi.model.OpenApiStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StopWatch;
 import org.springframework.web.client.RestTemplate;
 
 import javax.naming.SizeLimitExceededException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Slf4j
-public class OpenApiConsumerTest {
 
-    private OpenApiConsumer<ParkingInfo> openApiConsumer;
+public class OpenApiConsumerTest {
+    private static final Logger log = LoggerFactory.getLogger(OpenApiConsumerTest.class);
+
+    private OpenApiConsumer openApiConsumer;
     private RestTemplate restTemplate;
-    private ModelMapper modelMapper;
+    private static final String END_POINT = "http://openapi.seoul.go.kr:8088";
+    private static final String TOKEN = "6a756259796a756d32304559665677";
 
     @BeforeEach
     void setUp() {
         restTemplate = new RestTemplate();
-        openApiConsumer = new OpenApiConsumer<>(restTemplate);
-        modelMapper = new ModelMapper();
+        openApiConsumer = new OpenApiConsumer(restTemplate, TOKEN, END_POINT);
     }
 
     @Test
@@ -35,7 +38,7 @@ public class OpenApiConsumerTest {
         String address = "마포";
 
         // WHEN
-        OpenApiResponse<ParkingInfo> response = openApiConsumer.fetchApiData(ParkingInfo.API_NAME, rowStartAt, rowEndAt, address);
+        OpenApiResponse response = openApiConsumer.fetchApiData(OpenApiConsumer.PARK_API_NAME, rowStartAt, rowEndAt, address);
 
         // THEN
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK);
@@ -47,30 +50,114 @@ public class OpenApiConsumerTest {
     @Test
     void maxSizeTest() throws SizeLimitExceededException {
         // GIVEN
+        String address = " ";
+        StopWatch stopWatch = new StopWatch("maxSizeTest");
 
         // WHEN
         int size = 1000;
         int i = 0;
-        int total = 0;
+        int actualTotalSize = 0;
+        int expectedTotalSize = -1;
+
         while(size == 1000) {
             int rowStartAt = i * 1000 + 1;
             int rowEndAt = i * 1000 + 1000;
 
-            OpenApiResponse<ParkingInfo> response =
-                    openApiConsumer.fetchApiData(ParkingInfo.API_NAME, rowStartAt, rowEndAt, "");
-            total += response.getData().size();
+            stopWatch.start("sub-"+ (i+1));
+            OpenApiResponse response =
+                    openApiConsumer.fetchApiData(OpenApiConsumer.PARK_API_NAME, rowStartAt, rowEndAt, address);
+            stopWatch.stop();
+
+            // THEN
+            assertThat(response.getStatus()).isEqualTo(HttpStatus.OK);
+
+            if(response.getApiStatus() != OpenApiStatus.OK) {
+                log.error("ApiStatus is not OK.: {}", response.getApiStatus());
+                break;
+            }
+
+            assertThat(response.getData()).isNotEmpty();
+            expectedTotalSize = response.getSize();
+            actualTotalSize += response.getData().size();
 
             log.info("try seq {}: real size -> {}", i+1, response.getData().size());
-            log.info("누적 데이터: {}", total);
 
+            size = response.getData().size();
             ++i;
         }
 
-        // THEN
+        log.info("---------------------------");
+        log.info("total time millis: {}", stopWatch.getTotalTimeMillis());
+        log.info("누적 요청 데이터: {}", actualTotalSize);
+        log.info(stopWatch.prettyPrint());
+
+        assertThat(actualTotalSize).isEqualTo(expectedTotalSize);
     }
 
     @Test
-    void sizeLimitExceededExceptionInClientSideTest() {
+    void parkingCodeTest() throws SizeLimitExceededException {
+        // GIVEN
+        String parkingCode = "1033754";
+
+        // WHEN
+        OpenApiResponse response = openApiConsumer.getParkInfoByParkingCode(parkingCode);
+
+        // THEN
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getApiStatus()).isEqualTo(OpenApiStatus.OK);
+        assertThat(response.getData()).isNotNull();
+        assertThat(response.getData()).isNotEmpty();
+        assertThat(response.getData()).hasSize(1);
+        assertThat(response.getData().get(0)).hasFieldOrPropertyWithValue("parkingCode", parkingCode);
+        log.info("parkInfo: {}", response.getData().get(0));
+    }
+
+    @Test
+    void serverErrorTest() throws SizeLimitExceededException {
+        // GIVEN
+        int rowStartAt = 1;
+        int rowEndAt = 1;
+        String address = "마포";
+        String apiServiceName = "WrongService";
+
+        // WHEN
+        OpenApiResponse response = openApiConsumer.fetchApiData(apiServiceName, rowStartAt, rowEndAt, address);
+
+        // THEN
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getApiStatus()).isEqualTo(OpenApiStatus.SERVER_ERROR);
+    }
+
+    @Test
+    void noDataTest() throws SizeLimitExceededException {
+        // GIVEN
+        int rowStartAt = 1;
+        int rowEndAt = 1;
+        String address = "화성";
+
+        // WHEN
+        OpenApiResponse response = openApiConsumer.fetchApiData(OpenApiConsumer.PARK_API_NAME, rowStartAt, rowEndAt, address);
+
+        // THEN
+        assertThat(response.getApiStatus()).isEqualTo(OpenApiStatus.NO_DATA);
+    }
+
+    @Test
+    void wrongIndexRangeTest() {
+        // GIVEN
+        int rowStartAt = 2;
+        int rowEndAt = 1;
+        String address = "마포";
+
+        // WHEN and THEN
+        assertThrows(IllegalArgumentException.class, () -> {
+            OpenApiResponse response = openApiConsumer.getParkInfoByAddress(rowStartAt, rowEndAt, address);
+        });
+
+    }
+
+    @Test
+    void sizeLimitExceededExceptionAtClientSideTest() {
         // GIVEN
         int rowStartAt = 1;
         int rowEndAt = 1001;
@@ -78,50 +165,7 @@ public class OpenApiConsumerTest {
 
         // WHEN and THEN
         assertThrows(SizeLimitExceededException.class, () -> {
-            OpenApiResponse<ParkingInfo> response = openApiConsumer.fetchApiData(ParkingInfo.API_NAME, rowStartAt, rowEndAt, address);
+            OpenApiResponse response = openApiConsumer.fetchApiData(OpenApiConsumer.PARK_API_NAME, rowStartAt, rowEndAt, address);
         });
     }
-
-
-
-    /*
-    @Test
-    void 테스트_오픈API테스트1() {
-        // GIVEN
-        int pageStartAt = 1;
-        int pageEndAt = 5;
-        String address = "마포";
-
-        // WHEN
-        Map<String, Object> response = restTemplate.getForObject(API_URL, Map.class);
-        OpenApiResponse<ParkingInfo> result = modelMapper.map(response.get("GetParkInfo"), (OpenApiResponse.class));
-        log.info("result: {}", result);
-
-        // THEN
-        assertThat(response).isNotNull();
-        assertThat(result.getData()).isNotEmpty();
-        assertThat(result.getData().size()).isEqualTo(result.getSize());
-        assertThat(result.getData()).hasSize(5);
-    }
-
-    @Test
-    void 테스트_오픈API테스트2() {
-        // GIVEN
-        int rowStartAt = 1000;
-        int rowEndAt = 2000;
-        String address = "망원";
-
-        // WHEN
-        ResponseEntity<Map> response = restTemplate.exchange(API_URL, HttpMethod.GET, null, Map.class, API_TOKEN, rowStartAt, rowEndAt, address);
-        OpenApiResponse<ParkingInfo> result = modelMapper.map(response.getBody().get("GetParkInfo"), (OpenApiResponse.class));
-
-        log.info("row size: {}", result.getSize());
-        log.info("row result: {}", result.getData());
-
-        // THEN
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(result.getData()).isNotEmpty();
-        assertThat(result.getData()).hasSizeLessThanOrEqualTo((rowEndAt - rowStartAt + 1));
-    }
-     */
 }
