@@ -1,0 +1,26 @@
+# Common
+
+spring:
+  profiles:
+    active: local
+
+common:
+  api-token: 6a756259796a756d32304559665677
+
+---
+# Local
+
+
+---
+# Dev
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: localhost:3306/parkinglot
+    username: root
+    password: admin1!
+
+---
+# H2
+
