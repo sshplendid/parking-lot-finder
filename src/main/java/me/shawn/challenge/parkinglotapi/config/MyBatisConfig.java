@@ -19,7 +19,7 @@ import javax.sql.DataSource;
 
 @Slf4j
 @Configuration
-@MapperScan(basePackages = "me.shawn.challenge.parkinglotapi.v1", sqlSessionFactoryRef="sqlSessionFactory")
+//@MapperScan(basePackages = "me.shawn.challenge.parkinglotapi.v1", sqlSessionFactoryRef="sqlSessionFactory")
 @EnableTransactionManagement
 public class MyBatisConfig {
 
