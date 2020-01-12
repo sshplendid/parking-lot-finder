@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -24,9 +25,14 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
     @GetMapping("/error")
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(value = {Throwable.class})
-    public ErrorMessage error(Throwable t) {
+    public CommonResponse error(Throwable t) {
         log.error("에러 발생: {}", t.getMessage());
-        return new ErrorMessage("SERVER_ERROR", "서버 에러가 발생했습니다.");
+        return CommonResponse.builder()
+                .status("ERROR")
+                .message("에러가 발생했습니다.")
+                .size(0)
+                .data(new ArrayList<>())
+                .build();
     }
 
     @Override
@@ -36,19 +42,27 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
     public CommonResponse beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
+        CommonResponse.CommonResponseBuilder<Object> builder = CommonResponse.builder();
         String status = "OK";
         String message = "API 요청을 정상적으로 처리했습니다.";
-        long size = -1;
+        long size = 0;
 
-        if(body instanceof List && ((List) body) != null) {
-            size = ((List) body).size();
+        if(body instanceof CommonResponse) {
+            return (CommonResponse) body;
+        } else if(body instanceof List && ((List) body) != null) {
+            builder.size(((List) body).size());
+            builder.data((List<Object>) body);
+        } else {
+            // 응답 결과가 List가 아닌 경우, List에 넣어서 body에 다시 할당한다. 그리고 사이즈는 1로 설정한다.
+            builder.size(1);
+            List<Object> newList = new ArrayList<Object>();
+            newList.add(body);
+            builder.data(newList);
         }
 
-        return CommonResponse.builder()
+        return builder
                 .status(status)
                 .message(message)
-                .size(size)
-                .data((List<Object>) body)
                 .build();
     }
 }
