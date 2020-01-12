@@ -1,6 +1,3 @@
-# show tables;
-# drop table parking_lot;
-
 create table parking_lot (
     SEQ INT not null auto_increment primary key,
     PARKING_NAME varchar(200),
