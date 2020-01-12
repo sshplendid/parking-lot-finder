@@ -70,9 +70,16 @@ public class OpenApiConsumer {
     }
     OpenApiResponse fetchApiData(String apiName, int rowStartAt, int rowEndAt, String query1, String query2) {
         validateRequest(rowStartAt, rowEndAt);
+        if(query1 == null) {
+            query1 = EMPTY;
+        }
+        if(query2 == null) {
+            query2 = EMPTY;
+        }
 
+        log.info("Trying to request: /{}/json/{}/{}/{}/{}", apiToken, rowStartAt, rowEndAt, query1, query2);
         ResponseEntity<Map> responseEntity = restTemplate.exchange(apiEndpoint + API_PATH, HttpMethod.GET, null, Map.class, apiToken, apiName, rowStartAt, rowEndAt, query1, query2);
-        log.info("api url: {}", responseEntity.getBody().toString());
+//        log.info("api result: {}", responseEntity.getBody().toString());
 
         if(responseEntity.getBody() != null && responseEntity.getBody().containsKey(RESULT) ) {
             String apiStatusCode = ((Map<String, String>) responseEntity.getBody().get(RESULT)).getOrDefault("CODE", "UNKNOWN");
