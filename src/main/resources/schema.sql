@@ -1,3 +1,5 @@
+drop table if exists parking_lot;
+
 create table parking_lot (
     SEQ INT not null auto_increment primary key,
     PARKING_NAME varchar(200),
@@ -45,52 +47,3 @@ create table parking_lot (
     ASSIGN_CODE_NM varchar(200)
 );
 
-
-/*
-create table parking_lot (
-     SEQ INT not null auto_increment primary key,
-     PARKING_NAME varchar(200) not null,
-     ADDR varchar(500) not null,
-     PARKING_CODE varchar(200) not null,
-     PARKING_TYPE varchar(200) not null,
-     PARKING_TYPE_NM varchar(200) not null,
-     OPERATION_RULE varchar(200) not null,
-     OPERATION_RULE_NM varchar(200) not null,
-     TEL varchar(200) not null,
-     QUE_STATUS varchar(200) not null,
-     QUE_STATUS_NM varchar(200) not null,
-     CAPACITY INT not null,
-     CUR_PARKING INT not null,
-     CUR_PARKING_TIME varchar(200) not null,
-     PAY_YN varchar(200) not null,
-     PAY_NM varchar(200) not null,
-     NIGHT_FREE_OPEN varchar(200) not null,
-     NIGHT_FREE_OPEN_NM varchar(200) not null,
-     WEEKDAY_BEGIN_TIME varchar(200) not null,
-     WEEKDAY_END_TIME varchar(200) not null,
-     WEEKEND_BEGIN_TIME varchar(200) not null,
-     WEEKEND_END_TIME varchar(200) not null,
-     HOLIDAY_BEGIN_TIME varchar(200) not null,
-     HOLIDAY_END_TIME varchar(200) not null,
-     SYNC_TIME varchar(200) not null,
-     SATURDAY_PAY_YN varchar(200) not null,
-     SATURDAY_PAY_NM varchar(200) not null,
-     HOLIDAY_PAY_YN varchar(200) not null,
-     HOLIDAY_PAY_NM varchar(200) not null,
-     FULLTIME_MONTHLY varchar(200) not null,
-     GRP_PARKNM varchar(200) not null,
-     RATES INT not null,
-     TIME_RATE INT not null,
-     ADD_RATES INT not null,
-     ADD_TIME_RATE INT not null,
-     BUS_RATES INT not null,
-     BUS_TIME_RATE INT not null,
-     BUS_ADD_TIME_RATE INT not null,
-     BUS_ADD_RATES INT not null,
-     DAY_MAXIMUM INT not null,
-     LAT INT not null,
-     LNG INT not null,
-     ASSIGN_CODE varchar(200) not null,
-     ASSIGN_CODE_NM varchar(200) not null
-);
- */
