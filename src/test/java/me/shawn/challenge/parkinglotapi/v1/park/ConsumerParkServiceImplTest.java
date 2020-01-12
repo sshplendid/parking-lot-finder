@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ParkServiceConsumerImplTest {
-    private static final Logger log = LoggerFactory.getLogger(ParkServiceConsumerImplTest.class);
+class ConsumerParkServiceImplTest {
+    private static final Logger log = LoggerFactory.getLogger(ConsumerParkServiceImplTest.class);
     private StopWatch stopWatch;
 
     private ParkService parkService;
@@ -29,7 +29,7 @@ class ParkServiceConsumerImplTest {
         RestTemplate restTemplate = new RestTemplate();
 
         OpenApiConsumer openApiConsumer = new OpenApiConsumer(restTemplate, token, endpoint);
-        parkService = new ParkServiceConsumerImpl(openApiConsumer);
+        parkService = new ConsumerParkServiceImpl(openApiConsumer);
 
         stopWatch = new StopWatch("junit");
     }
