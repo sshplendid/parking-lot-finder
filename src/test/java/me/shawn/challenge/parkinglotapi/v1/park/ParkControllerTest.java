@@ -13,7 +13,6 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
@@ -30,7 +29,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureRestDocs()
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 class ParkControllerTest {
 
@@ -75,10 +73,10 @@ class ParkControllerTest {
                           parameterWithName("address").description("주소 (e.g. '마포', '망원')")
                         ),
                         requestParameters(
-                                parameterWithName("rowStartAt").description("검색 인덱스 시작위치"),
-                                parameterWithName("rowEndAt").description("검색 인덱스 종료 위치"),
-                                parameterWithName("tel").description("주차장 전화번호"),
-                                parameterWithName("parkingName").description("주차장 이름")
+                                parameterWithName("rowStartAt").description("검색 인덱스 시작위치 (default: 1)").optional(),
+                                parameterWithName("rowEndAt").description("검색 인덱스 종료 위치 (default: 30)").optional(),
+                                parameterWithName("tel").description("주차장 전화번호").optional(),
+                                parameterWithName("parkingName").description("주차장 이름").optional()
                         ),
                         responseFields(
                                 fieldWithPath("[].parkingName").description("주차장명"),
