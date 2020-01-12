@@ -4,10 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import me.shawn.challenge.parkinglotapi.openapi.OpenApiConsumer;
 import me.shawn.challenge.parkinglotapi.openapi.model.OpenApiResponse;
 import me.shawn.challenge.parkinglotapi.openapi.model.ParkInfoDTO;
+import me.shawn.challenge.parkinglotapi.v1.park.util.MinPriceParkInfoSorter;
+import me.shawn.challenge.parkinglotapi.v1.park.util.ParkInfoSorter;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,12 @@ public class ConsumerParkServiceImpl implements ParkService {
 
     @Override
     public List<ParkInfoDTO> getParkInfoByAddress(String address, int rowStartAt, int rowEndAt, String ... arg) {
+        // TODO sorter
+        MinPriceParkInfoSorter sorter = new MinPriceParkInfoSorter();
+
+        return getParkInfoByAddress(sorter, address, rowStartAt, rowEndAt, arg);
+    }
+    public List<ParkInfoDTO> getParkInfoByAddress(ParkInfoSorter sorter, String address, int rowStartAt, int rowEndAt, String ... arg) {
         log.info("=> getParkInfoByAddress({}, {}, {}, {}, {})", address, rowStartAt, rowEndAt, arg.length>=1? arg[0]:null, arg.length>=2? arg[1]:null);
         List<ParkInfoDTO> totalList = new ArrayList<>();
 
@@ -50,7 +57,8 @@ public class ConsumerParkServiceImpl implements ParkService {
             ++i;
         }
         log.info("<=OpenApiConsumer: {} requested. filtered size: {}", i, totalList.size());
-        return totalList.stream().sorted(Comparator.comparingDouble(ParkInfoDTO::getParkingFeePerHour)).collect(Collectors.toList())
-        .subList((rowStartAt - 1), rowEndAt > totalList.size() ? totalList.size() : rowEndAt);
+        return sorter.sort(totalList.stream())
+                .collect(Collectors.toList())
+                .subList((rowStartAt - 1), rowEndAt > totalList.size() ? totalList.size() : rowEndAt);
     }
 }
