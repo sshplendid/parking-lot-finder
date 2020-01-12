@@ -2,8 +2,7 @@
 
 spring:
   profiles:
-    active: local
-
+    active: dev
 common:
   open-api:
     endpoint: http://openapi.seoul.go.kr:8088
@@ -14,27 +13,22 @@ common:
 
 spring:
   profiles: local
-
----
-# mysql
-
-spring:
-  profiles: mysql
-  datasource:
-    hikari:
-      driver-class-name: com.mysql.jdbc.Driver
-      username: root
-      password: admin1!
-      jdbc-url: jdbc:mysql://localhost:3306/parkinglot
-
----
-# H2
-
-spring:
-  profiles: h2
   datasource:
     hikari:
       jdbc-url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
       username: sa
       password:
-      driver-class-name: com.h2.Driver
+      driver-class-name: org.h2.Driver
+
+---
+# dev
+
+spring:
+  profiles: dev
+  datasource:
+    hikari:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      username: root
+      password: admin1!
+      jdbc-url: jdbc:mysql://localhost:3306/parkinglot
+
