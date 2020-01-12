@@ -3,6 +3,7 @@ package me.shawn.challenge.parkinglotapi.openapi;
 import me.shawn.challenge.parkinglotapi.openapi.model.OpenApiResponse;
 import me.shawn.challenge.parkinglotapi.openapi.model.OpenApiStatus;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,7 @@ public class OpenApiConsumerTest {
         assertThat(response.getData()).hasSizeLessThanOrEqualTo((rowEndAt - rowStartAt + 1));
     }
 
+    @Disabled
     @Test
     void maxSizeTest() {
         // GIVEN

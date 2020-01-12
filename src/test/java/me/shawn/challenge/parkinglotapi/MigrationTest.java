@@ -4,6 +4,7 @@ import me.shawn.challenge.parkinglotapi.openapi.OpenApiConsumer;
 import me.shawn.challenge.parkinglotapi.openapi.model.OpenApiResponse;
 import me.shawn.challenge.parkinglotapi.openapi.model.ParkInfoDTO;
 import me.shawn.challenge.parkinglotapi.v1.park.ParkMapper;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles({"mysql"})
 @SpringBootTest
-//@Transactional
+@Transactional
 public class MigrationTest {
 
     private static final Logger log = LoggerFactory.getLogger(MigrationTest.class);
@@ -34,6 +35,7 @@ public class MigrationTest {
     @Autowired
     OpenApiConsumer openApiConsumer;
 
+    @Disabled
     @Test
     void migration() {
         StopWatch stopWatch = new StopWatch();
