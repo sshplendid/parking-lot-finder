@@ -1,7 +1,9 @@
 package me.shawn.challenge.parkinglotapi.openapi.model;
 
 import lombok.*;
+import org.apache.ibatis.type.Alias;
 
+@Alias("park")
 @Builder @AllArgsConstructor
 @Setter @Getter @NoArgsConstructor @ToString
 public class ParkInfoDTO {
