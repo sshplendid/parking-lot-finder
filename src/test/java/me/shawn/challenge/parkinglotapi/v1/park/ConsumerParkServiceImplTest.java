@@ -35,7 +35,7 @@ class ConsumerParkServiceImplTest {
     }
 
     @Test
-    void getParkInfoByAddress_마포구() throws SizeLimitExceededException {
+    void getParkInfoByAddress_마포구() {
         // GIVEN
         String address = "마포구";
         stopWatch.start();
@@ -52,7 +52,7 @@ class ConsumerParkServiceImplTest {
     }
 
     @Test
-    void getParkInfoByAddress_망원동() throws SizeLimitExceededException {
+    void getParkInfoByAddress_망원동() {
         // GIVEN
         String address = "망원동";
         stopWatch.start();
@@ -70,7 +70,7 @@ class ConsumerParkServiceImplTest {
     }
 
     @Test
-    void getParkInfoByAddressAndTel() throws SizeLimitExceededException {
+    void getParkInfoByAddressAndTel() {
         // GIVEN
         String address = "마포";
         String tel = "02-300-5052";
@@ -89,7 +89,7 @@ class ConsumerParkServiceImplTest {
     }
 
     @Test
-    void getParkInfoByAddressAndParkingLotName() throws SizeLimitExceededException {
+    void getParkInfoByAddressAndParkingLotName() {
         // GIVEN
         String address = "마포";
         String parkingLotName = "공영주차장";
@@ -108,7 +108,7 @@ class ConsumerParkServiceImplTest {
     }
 
     @Test
-    void getParkInfoByAddressAndTelAndParkingLotName() throws SizeLimitExceededException {
+    void getParkInfoByAddressAndTelAndParkingLotName() {
         // GIVEN
         int rowStartAt = 1;
         int rowEndAt = 1000;
@@ -130,7 +130,7 @@ class ConsumerParkServiceImplTest {
     }
 
     @Test
-    void listOrderTest() throws SizeLimitExceededException {
+    void listOrderTest() {
         // GIVEN
         int rowStartAt = 1;
         int rowEndAt = 10;
@@ -159,6 +159,22 @@ class ConsumerParkServiceImplTest {
         orderedParkInfoList.forEach(p -> {
             log.info("{}: {}", p.getParkingName(), p.getParkingFeePerHour());
         });
+    }
+
+    @Test
+    void arrayBoundsTest() {
+        // GIVEN
+        int rowStartAt = 1;
+        int rowEndAt = 1000;
+        String address = "강남";
+        String parkingName = "공영주차장";
+
+        // WHEN
+        List<ParkInfoDTO> list = parkService.getParkInfoByAddress(address, rowStartAt, rowEndAt, null, parkingName);
+
+        // THEN
+        assertThat(list).isNotEmpty();
+        assertThat(list).hasSizeGreaterThanOrEqualTo(2);
     }
 
     @AfterEach

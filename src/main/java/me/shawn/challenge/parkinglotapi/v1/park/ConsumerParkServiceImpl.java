@@ -51,6 +51,6 @@ public class ConsumerParkServiceImpl implements ParkService {
         }
         log.info("<=OpenApiConsumer: {} requested. filtered size: {}", i, totalList.size());
         return totalList.stream().sorted(Comparator.comparingDouble(ParkInfoDTO::getParkingFeePerHour)).collect(Collectors.toList())
-        .subList((rowStartAt - 1), rowEndAt);
+        .subList((rowStartAt - 1), rowEndAt > totalList.size() ? totalList.size() : rowEndAt);
     }
 }
