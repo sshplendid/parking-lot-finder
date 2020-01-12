@@ -19,7 +19,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ActiveProfiles({"mysql"})
+@ActiveProfiles({"dev"})
 @SpringBootTest
 @Transactional
 public class MigrationTest {
