@@ -3,7 +3,7 @@ package me.shawn.challenge.parkinglotapi;
 import me.shawn.challenge.parkinglotapi.openapi.OpenApiConsumer;
 import me.shawn.challenge.parkinglotapi.openapi.model.OpenApiResponse;
 import me.shawn.challenge.parkinglotapi.openapi.model.ParkInfoDTO;
-import me.shawn.challenge.parkinglotapi.v1.park.ParkMapper;
+import me.shawn.challenge.parkinglotapi.v1.park.mapper.ParkMapper;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package me.shawn.challenge.parkinglotapi.v1.park;
+package me.shawn.challenge.parkinglotapi.v1.park.mapper;
 
 import me.shawn.challenge.parkinglotapi.openapi.model.ParkInfoDTO;
 import org.apache.ibatis.annotations.Mapper;

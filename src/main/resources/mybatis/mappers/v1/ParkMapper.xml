@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="me.shawn.challenge.parkinglotapi.v1.park.ParkMapper">
+<mapper namespace="me.shawn.challenge.parkinglotapi.v1.park.mapper.ParkMapper">
     <insert id="insertParkInfo">
         insert into parking_lot
         (PARKING_NAME,
