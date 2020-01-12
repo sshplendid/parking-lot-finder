@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.naming.SizeLimitExceededException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -126,6 +127,38 @@ class ParkServiceConsumerImplTest {
         assertThat(parkInfo).allMatch(parkInfoDTO -> tel.equals(parkInfoDTO.getTel()) && parkInfoDTO.getParkingName().contains(parkingLotName));
         log.info("list({}): {}", parkInfo.size(), parkInfo);
         log.info("totalTimeMillis: {} ms", stopWatch.getTotalTimeMillis());
+    }
+
+    @Test
+    void listOrderTest() throws SizeLimitExceededException {
+        // GIVEN
+        int rowStartAt = 1;
+        int rowEndAt = 10;
+        String address = "마포";
+        stopWatch.start();
+
+        // WHEN
+        List<ParkInfoDTO> parkInfo = parkService.getParkInfoByAddress(address, rowStartAt, rowEndAt);
+        stopWatch.stop();;
+        List<ParkInfoDTO> orderedParkInfoList = parkInfo.stream().sorted((o1, o2) -> {
+            if(o1.getParkingFeePerHour() > o2.getParkingFeePerHour()) {
+                return 1;
+            } else if(o1.getParkingFeePerHour() == o2.getParkingFeePerHour()) {
+                return 0;
+            }
+            return -1;
+        }).collect(Collectors.toList());
+
+        // THEN
+        assertThat(parkInfo).isNotEmpty();
+        assertThat(parkInfo).hasSizeGreaterThan(0);
+        assertThat(orderedParkInfoList).isEqualTo(parkInfo);
+        log.info("list({}): {}", parkInfo.size(), parkInfo);
+        log.info("totalTimeMillis: {} ms", stopWatch.getTotalTimeMillis());
+        log.info("=== 정렬순서 ===");
+        orderedParkInfoList.forEach(p -> {
+            log.info("{}: {}", p.getParkingName(), p.getParkingFeePerHour());
+        });
     }
 
     @AfterEach

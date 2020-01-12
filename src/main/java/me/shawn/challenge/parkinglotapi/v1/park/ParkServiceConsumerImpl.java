@@ -31,6 +31,14 @@ public class ParkServiceConsumerImpl implements ParkService {
                     }
                     return true;
                 })
+                .sorted((o1, o2) -> {
+                    if(o1.getParkingFeePerHour() > o2.getParkingFeePerHour()) {
+                        return 1;
+                    } else if(o1.getParkingFeePerHour() == o2.getParkingFeePerHour()) {
+                        return 0;
+                    }
+                    return -1;
+                })
                 .collect(Collectors.toList());
     }
 }

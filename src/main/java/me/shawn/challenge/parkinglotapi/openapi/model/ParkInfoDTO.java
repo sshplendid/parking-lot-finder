@@ -1,10 +1,8 @@
 package me.shawn.challenge.parkinglotapi.openapi.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
+@Builder @AllArgsConstructor
 @Setter @Getter @NoArgsConstructor @ToString
 public class ParkInfoDTO {
     private String parkingName;
@@ -50,4 +48,15 @@ public class ParkInfoDTO {
     private Double lng;
     private String assignCode;
     private String assignCodeNm;
+
+    /**
+     * 시간당 예상 요금을 구한다. 만약 추가요금(addRates) 및 추가과금 단위시간(addTimeRate)이 없을 경우, 기본요금(rates) 및 기본 단위시간(timeRate)으로 계산한다.
+     * @return 시간당 주차요금
+     */
+    public double getParkingFeePerHour() {
+        double extraFee = addRates > 0 ? addRates : rates;
+        double times = (60 - timeRate) / (addTimeRate > 0 ? addTimeRate : timeRate);
+        return rates + (times * extraFee);
+
+    }
 }
