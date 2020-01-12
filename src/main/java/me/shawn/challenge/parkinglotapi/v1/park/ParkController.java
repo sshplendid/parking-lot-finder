@@ -17,7 +17,9 @@ public class ParkController {
     }
 
     @GetMapping("/{address}")
-    public List<ParkInfoDTO> getParkingLotByAddress(@PathVariable String address, @RequestParam(required = false) String tel, @RequestParam(required = false) String parkingName, @RequestParam(required = false, defaultValue = "1") int rowStartAt, @RequestParam(required = false, defaultValue = "30") int rowEndAt) {
+    public List<ParkInfoDTO> getParkingLotByAddress(@PathVariable String address, @RequestParam(required = false) String tel, @RequestParam(required = false) String parkingName, @RequestParam(required = false, defaultValue = "1") int page, @RequestParam(required = false, defaultValue = "30") int pagesize) {
+        int rowStartAt = (page - 1) * pagesize + 1;
+        int rowEndAt = page * pagesize;
         return parkService.getParkInfoByAddress(address, rowStartAt, rowEndAt, tel, parkingName);
     }
 

@@ -60,8 +60,8 @@ class ParkControllerTest {
         // WHEN and THEN
         mockMvc.perform(RestDocumentationRequestBuilders.get("/parks/{address}", address)
                     .accept(MediaType.APPLICATION_JSON)
-                    .param("rowStartAt", "1")
-                    .param("rowEndAt", "30")
+                    .param("page", "1")
+                    .param("pagesize", "15")
                     .param("tel", "02-300-5052")
                     .param("parkingName", "공영주차장")
                 )
@@ -75,8 +75,8 @@ class ParkControllerTest {
                           parameterWithName("address").description("주소 (e.g. '마포', '망원')")
                         ),
                         requestParameters(
-                                parameterWithName("rowStartAt").description("검색 인덱스 시작위치 (default: 1)").optional(),
-                                parameterWithName("rowEndAt").description("검색 인덱스 종료 위치 (default: 30)").optional(),
+                                parameterWithName("page").description("페이지 번호 (default: 1)").optional(),
+                                parameterWithName("pagesize").description("페이지 사이즈 (default: 30)").optional(),
                                 parameterWithName("tel").description("주차장 전화번호").optional(),
                                 parameterWithName("parkingName").description("주차장 이름").optional()
                         ),
