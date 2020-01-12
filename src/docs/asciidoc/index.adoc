@@ -43,14 +43,14 @@ sshplendid.github.io
 |===
 | field | 설명
 
-| `code`
-| 응답 코드
+| `status`
+| 응답 상태
 
 | `message`
-| 예외사항 내용 등 응답 메세지
+| 응답 메세지
 
 | `size`
-| `data`의 크기
+| data 의 크기
 
 | `data`
 | 실제 반환될 데이터

@@ -18,7 +18,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@ActiveProfiles({"mysql"})
+@ActiveProfiles({"local"})
 @Transactional
 @SpringBootTest
 class ParkMapperTest {
@@ -68,6 +68,6 @@ class ParkMapperTest {
         List<ParkInfoDTO> list = parkMapper.getParkInfo(map);
 
         // THEN
-        assertThat(list).isNotEmpty();
+        assertThat(list).isNotNull();
     }
 }
