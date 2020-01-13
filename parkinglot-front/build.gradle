@@ -16,7 +16,7 @@ dependencies {
 }
 
 task vuecliSetup(type: YarnTask, dependsOn: 'yarn') {
-    args ['global', 'add', '@vue/cli']
+    args = ['global', 'add', '@vue/cli']
 }
 task webpack(type: YarnTask, dependsOn: 'yarnSetup') {
     args = ['run', 'build']
