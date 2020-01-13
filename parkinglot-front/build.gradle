@@ -15,11 +15,11 @@ dependencies {
     }
 }
 
-task webpack(type: NpmTask, dependsOn: 'npmInstall') {
+task webpack(type: NpmTask, dependsOn: 'yarnSetup') {
     args = ['run', 'build']
 }
 
-springBoot {
+bootJar {
     mainClassName = 'me.shawn.challenge.parkinglotfront.FrontApplication'
 }
 

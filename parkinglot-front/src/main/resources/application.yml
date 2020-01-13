@@ -1,6 +1,6 @@
 # Common
 
 server:
-  port: 80
+  port: 8001
   servlet:
     context-path: /front
