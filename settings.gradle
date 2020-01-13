@@ -2,4 +2,4 @@ rootProject.name = 'parkinglot-app'
 
 include 'parkinglot-api'
 include 'parkinglot-front'
-
+include 'proxy'
