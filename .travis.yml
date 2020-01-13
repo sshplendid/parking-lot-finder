@@ -5,6 +5,14 @@ os: linux
 dist: trusty
 jdk: oraclejdk8
 
+before_install:
+  - echo "before install!"
+  - nvm --version
+  - nvm install --lts && nvm use --lts
+  - node --version
+  - npm --version
+  - yarn --version || npm install -g yarn
+
 script:
   - ./gradlew clean
   - ./gradlew build
