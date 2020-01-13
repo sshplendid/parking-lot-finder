@@ -1,0 +1,21 @@
+{
+  "name": "parkinglot-front",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "error": "webpack --display-error-details",
+    "start": "webpack-dev-server --env=dev --progress --inline",
+    "dev": "webpack --env=dev --progress --profile --colors",
+    "build": "webpack --env=prod --progress --profile --colors",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^4.41.5"
+  },
+  "dependencies": {
+    "vue": "^2.6.11"
+  }
+}

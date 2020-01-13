@@ -8,13 +8,25 @@ buildscript {
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath "io.spring.gradle:dependency-management-plugin:1.0.8.RELEASE"
-        // classpath 'org.asciidoctor.convert:1.5.8'
     }
 }
 
+// gradle spring project configuration
+// https://github.com/gradle/gradle/blob/master/subprojects/docs/src/samples/spring-boot-web-application/groovy/build.gradle
+
+/*
 plugins {
-    id "org.springframework.boot" version "2.2.2.RELEASE"
     id "io.spring.dependency-management" version "1.0.8.RELEASE"
+    id "java"
+}
+ */
+
+allprojects {
+    task hello {
+        doLast {
+            println 'Hello world!'
+        }
+    }
 }
 
 subprojects {
@@ -23,8 +35,11 @@ subprojects {
 
     apply plugin: 'java'
     apply plugin: 'io.spring.dependency-management'
+    apply plugin:  "org.springframework.boot"
 
-    sourceCompatibility = '1.8'
+    java {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+    }
 
     repositories {
         mavenCentral()
