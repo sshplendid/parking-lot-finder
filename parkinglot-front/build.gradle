@@ -26,4 +26,4 @@ bootJar {
     mainClassName = 'me.shawn.challenge.parkinglotfront.FrontApplication'
 }
 
-processResources.dependsOn 'webpack'
+processResources.dependsOn 'vuecliSetup', 'webpack'
