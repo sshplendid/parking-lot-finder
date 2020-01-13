@@ -4,23 +4,35 @@ spring:
   profiles:
     active: local
 
-common:
-  api-token: 6a756259796a756d32304559665677
+server:
+  servlet:
+    context-path: /api
 
+common:
+  open-api:
+    endpoint: http://openapi.seoul.go.kr:8088
+    token: 6a756259796a756d32304559665677
 ---
 # Local
 
+spring:
+  profiles: local
+  datasource:
+    hikari:
+      jdbc-url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+      username: sa
+      password:
+      driver-class-name: org.h2.Driver
 
 ---
-# Dev
+# dev
 
 spring:
+  profiles: dev
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: localhost:3306/parkinglot
-    username: root
-    password: admin1!
-
----
-# H2
+    hikari:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      username: root
+      password: admin1!
+      jdbc-url: jdbc:mysql://localhost:3306/parkinglot
 
