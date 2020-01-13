@@ -3,10 +3,9 @@ dist: trusty
 
 matrix:
   include:
-    - language: node_js
-      node_js:
-        - "node --version"
     - language: java
       jdk: oraclejdk8
+      before_script:
+        - yarn --version && yarn global add @vue/cli
       script:
         - ./gradlew build
