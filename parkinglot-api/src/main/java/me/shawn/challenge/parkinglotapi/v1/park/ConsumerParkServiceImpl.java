@@ -56,7 +56,7 @@ public class ConsumerParkServiceImpl implements ParkService {
                     .collect(Collectors.toList()));
             ++i;
         }
-        log.info("<=OpenApiConsumer: {} requested. filtered size: {}", i, totalList.size());
+        log.info("<= OpenApiConsumer: {} requested. filtered size: {}", i, totalList.size());
         return sorter.sort(totalList.stream())
                 .collect(Collectors.toList())
                 .subList((rowStartAt - 1), rowEndAt > totalList.size() ? totalList.size() : rowEndAt);
