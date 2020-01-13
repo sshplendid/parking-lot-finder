@@ -1,1 +1,3 @@
-rootProject.name = 'parkinglot-api'
+rootProject.name = 'parkinglot-app'
+
+include 'parkinglot-api'
