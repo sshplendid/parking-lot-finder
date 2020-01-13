@@ -62,7 +62,9 @@ subprojects {
     }
 
     dependencies {
-        // testCompile group: 'junit', name: 'junit', version: '4.12'
+        testImplementation('org.springframework.boot:spring-boot-starter-test') {
+            exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+        }
     }
     dependencyManagement {
         imports {
