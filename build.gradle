@@ -1,6 +1,7 @@
 buildscript {
     ext {
         springBootVersion = '2.2.2.RELEASE'
+        springCloudVersion = 'Hoxton.SR1'
     }
     repositories {
         mavenCentral()
@@ -8,34 +9,74 @@ buildscript {
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath "io.spring.gradle:dependency-management-plugin:1.0.8.RELEASE"
-        // classpath 'org.asciidoctor.convert:1.5.8'
     }
 }
 
-plugins {
-    id "org.springframework.boot" version "2.2.2.RELEASE"
-    id "io.spring.dependency-management" version "1.0.8.RELEASE"
+// gradle spring project configuration
+// https://github.com/gradle/gradle/blob/master/subprojects/docs/src/samples/spring-boot-web-application/groovy/build.gradle
+
+allprojects {
+    apply plugin: 'java'
+
+    task hello {
+        doLast {
+            println 'Hello world!'
+        }
+    }
 }
 
 subprojects {
+    buildscript {
+        ext {
+            springBootVersion = '2.2.2.RELEASE'
+            springCloudVersion = 'Hoxton.SR1'
+        }
+        repositories {
+            mavenCentral()
+        }
+        dependencies {
+            classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+            classpath "io.spring.gradle:dependency-management-plugin:1.0.8.RELEASE"
+        }
+    }
+
     group = 'me.shawn.challenge'
     version = '0.0.1-SNAPSHOT'
 
-    apply plugin: 'java'
     apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'org.springframework.boot'
 
-    sourceCompatibility = '1.8'
+    java {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    jar {
+
+        baseName = 'gs-spring-boot-docker'
+        version =  '0.1.0'
+    }
+
 
     repositories {
         mavenCentral()
     }
 
     dependencies {
-        // testCompile group: 'junit', name: 'junit', version: '4.12'
+        testImplementation('org.springframework.boot:spring-boot-starter-test') {
+            exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+        }
     }
     dependencyManagement {
         imports {
             mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+        }
+    }
+}
+
+project(':proxy') {
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
         }
     }
 }

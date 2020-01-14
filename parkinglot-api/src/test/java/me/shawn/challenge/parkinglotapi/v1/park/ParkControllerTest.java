@@ -84,6 +84,7 @@ class ParkControllerTest {
                                 fieldWithPath("status").description("응답 상태코드"),
                                 fieldWithPath("message").description("응답 메세지"),
                                 fieldWithPath("size").description("데이터의 사이즈"),
+                                fieldWithPath("data[].uniqueKey").description("주차정보 고유번호"),
                                 fieldWithPath("data[].parkingName").description("주차장명"),
                                 fieldWithPath("data[].addr").description("주소"),
                                 fieldWithPath("data[].parkingFeePerHour").description("시간당 주차 요금"),

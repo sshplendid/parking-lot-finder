@@ -1,0 +1,22 @@
+
+spring:
+#  jmx:
+#    enabled: false
+  cloud:
+    gateway:
+#      default-filters:
+#        - PrefixPath=/httpbin
+#        - AddResponseHeader=X-Response-Default-Foo, Default-Bar
+      routes:
+        - id: api
+          uri: http://localhost:8080
+          order: 10000
+          predicates:
+            - Path=/api/**
+        - id: front
+          uri: http://localhost:8081
+          order: 10000
+          predicates:
+            - Path=/front/**
+server:
+  port: 8000

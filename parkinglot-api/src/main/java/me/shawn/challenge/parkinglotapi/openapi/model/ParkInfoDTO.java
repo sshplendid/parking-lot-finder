@@ -61,4 +61,8 @@ public class ParkInfoDTO {
         return rates + (times * extraFee);
 
     }
+
+    public String getUniqueKey() {
+        return String.format("%s-%014.10f-%014.10f", this.parkingCode, this.lat, this.lng);
+    }
 }
