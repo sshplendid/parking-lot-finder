@@ -3,6 +3,11 @@ package me.shawn.challenge.parkinglotapi.openapi.model;
 import lombok.*;
 import org.apache.ibatis.type.Alias;
 
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
 @Alias("park")
 @Builder @AllArgsConstructor
 @Setter @Getter @NoArgsConstructor @ToString
@@ -62,7 +67,52 @@ public class ParkInfoDTO {
 
     }
 
+    /**
+     * 주차장 정보의 고유번호를 리턴한다. {주차장코드}-{위도}-{경도} 형식으로 나타낸다.
+     * @return
+     */
     public String getUniqueKey() {
         return String.format("%s-%014.10f-%014.10f", this.parkingCode, this.lat, this.lng);
+    }
+
+    /**
+     * 인자로 주어진 일시에 주차가능여부를 나타낸다.
+     * @return
+     */
+    public boolean isParkable() {
+        LocalDateTime parkDateTime = LocalDateTime.now();
+        boolean isHoliday = false;
+        if(parkDateTime.getDayOfWeek() == DayOfWeek.SUNDAY && parkDateTime.getDayOfWeek() == DayOfWeek.SATURDAY) {
+            isHoliday = true;
+        }
+
+        if(isHoliday) return isParkableHoliday(parkDateTime);
+
+
+        return isParkableWeekday(parkDateTime);
+    }
+
+    private boolean isParkableWeekday(LocalDateTime parkDateTime) {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HHmm");
+        int openHour = Integer.parseInt(this.weekdayBeginTime.substring(0, 2));
+        int closeHour = Integer.parseInt(this.weekendEndTime.substring(0, 2));
+        LocalTime openAt = LocalTime.of(openHour > 23? 0 : openHour, Integer.parseInt(this.weekdayBeginTime.substring(2)));
+        LocalTime closeAt = LocalTime.of(closeHour > 23? 0 : closeHour, Integer.parseInt(this.weekdayEndTime.substring(2)));
+
+        return this.isEnoughCapacity() && parkDateTime.toLocalTime().isAfter(openAt) && parkDateTime.toLocalTime().isBefore(closeAt);
+    }
+
+    private boolean isParkableHoliday(LocalDateTime parkDateTime) {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HHmm");
+        int openHour = Integer.parseInt(this.weekendBeginTime.substring(0, 2));
+        int closeHour = Integer.parseInt(this.weekendEndTime.substring(0, 2));
+        LocalTime openAt = LocalTime.of(openHour > 23? 0 : openHour, Integer.parseInt(this.weekdayBeginTime.substring(2)));
+        LocalTime closeAt = LocalTime.of(closeHour > 23? 0 : closeHour, Integer.parseInt(this.weekendEndTime.substring(2)));
+
+        return this.isEnoughCapacity() && parkDateTime.toLocalTime().isAfter(openAt) && parkDateTime.toLocalTime().isBefore(closeAt);
+    }
+
+    private boolean isEnoughCapacity() {
+        return (this.capacity - this.curParking) > 0;
     }
 }
