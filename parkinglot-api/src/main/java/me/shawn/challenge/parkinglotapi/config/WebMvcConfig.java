@@ -1,7 +1,13 @@
 package me.shawn.challenge.parkinglotapi.config;
 
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@EnableWebMvc
-public class WebMvcConfig {
+@Configuration
+public class WebMvcConfig implements WebMvcConfigurer {
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(new StringToEnumConverter());
+    }
 }

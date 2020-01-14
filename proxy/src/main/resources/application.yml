@@ -14,7 +14,7 @@ spring:
           predicates:
             - Path=/api/**
         - id: front
-          uri: http://localhost:8081
+          uri: http://localhost:8001
           order: 10000
           predicates:
             - Path=/front/**

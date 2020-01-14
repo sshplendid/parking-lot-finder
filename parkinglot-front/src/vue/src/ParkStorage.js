@@ -11,10 +11,11 @@ function makeQueryString(obj) {
 }
 
 module.exports = {
-  loadAllParkInfoByAddress: async function(addr, page, pageSize, tel, parkingName) {
+  loadAllParkInfoByAddress: async function(addr, sorter, page, pagesize, tel, parkingName) {
     console.log(`=> Trying to load park info. address: '${addr}'`);
-    const queryString = makeQueryString({page, pageSize, tel, parkingName});
+    const queryString = makeQueryString({page, pagesize, tel, parkingName});
     const url = `${endpoint}/api/parks/${encodeURI(addr)}?${queryString}`;
+    console.log(`url: ${url}`);
     const response = await fetch(url);
     console.log(`\tstatus: ${response.statusCode}`);
     const json = await response.json();
