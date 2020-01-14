@@ -5,11 +5,9 @@ module.exports = {
         sourceDir: __dirname + "/src/vue"
     },
     publicPath: '/front',
-    outputDir: __dirname + '/src/main/resources/static/dist',
+    outputDir: __dirname + '/src/main/resources/static',
     indexPath: __dirname + '/src/main/resources/static/index.html',
-    /*
     devServer: {
-        proxy: 'http://localhost:8000'
+        port: 8001
     }
-     */
 }
