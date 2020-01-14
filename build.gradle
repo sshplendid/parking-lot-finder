@@ -82,10 +82,3 @@ project(':proxy') {
     }
 }
 
-/*
-project(':parkinglot-api') {
-    dependencies {
-        compile project(':')
-    }
-}
-*/
