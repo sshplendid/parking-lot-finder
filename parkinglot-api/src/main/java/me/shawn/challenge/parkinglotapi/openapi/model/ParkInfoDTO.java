@@ -61,7 +61,7 @@ public class ParkInfoDTO {
      * @return 시간당 주차요금
      */
     public double getParkingFeePerHour() {
-        if(addRates == 0) {
+        if(rates == 0) {
             return 0;
         }
         double extraFee = addRates > 0 ? addRates : rates;
