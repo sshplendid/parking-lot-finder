@@ -2,7 +2,7 @@
   <div class="list-group-item list-group-item-action">
       <div class="d-flex w-100 justify-content-between">
         <h5 class="mb-1">{{ parkingName }} </h5>
-        <small v-if="hasDistance">{{distance}}</small>
+        <small v-if="hasDistance">약 {{distance}} km</small>
         <small>&#8361;&nbsp;{{ parkingFeePerHour }}</small>
       </div>
       <p class="mb-1">{{ addr }} (Tel. {{ tel }})</p>
@@ -13,8 +13,28 @@
 </template>
 
 <script>
-import { getDistance } from "../src/Geo";
-const console = window.console;
+const calculateDistance = (lat1, lng1, lat2, lng2, unit) => {
+	if ((lat1 == lat2) && (lng1 == lng2)) {
+		return 0;
+	} else {
+		var radlat1 = Math.PI * lat1/180;
+		var radlat2 = Math.PI * lat2/180;
+		var theta = lng1-lng2;
+		var radtheta = Math.PI * theta/180;
+		var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+		if (dist > 1) {
+			dist = 1;
+		}
+		dist = Math.acos(dist);
+		dist = dist * 180/Math.PI;
+		dist = dist * 60 * 1.1515;
+		if (unit=="K") { dist = dist * 1.609344 }
+		if (unit=="N") { dist = dist * 0.8684 }
+		return dist;
+	}
+};
+// const console = window.console;
+
 export default {
   props: [
     'parkingName', 'addr', 'tel', 'parkingFeePerHour', 'parkable', 'capacity', 'curParking',
@@ -31,9 +51,9 @@ export default {
     distance: function() {
       if(!this.currentPosition) {
         return -1;
+
       }
-      console.log(`pos: ${JSON.stringify(this.currentPosition)}`);
-      return  getDistance(this.currentPosition, {lat: this.lat, lng: this.lng});
+      return Number((calculateDistance(this.lat, this.lng, this.currentPosition.lat, this.currentPosition.lng, 'K').toFixed(1)));
     },
     hasDistance: function() {
       return this.distance > -1;
