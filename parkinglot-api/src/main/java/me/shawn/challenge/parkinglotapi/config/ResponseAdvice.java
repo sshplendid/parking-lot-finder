@@ -2,7 +2,6 @@ package me.shawn.challenge.parkinglotapi.config;
 
 import lombok.extern.slf4j.Slf4j;
 import me.shawn.challenge.parkinglotapi.model.CommonResponse;
-import me.shawn.challenge.parkinglotapi.model.ErrorMessage;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -10,13 +9,11 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.joining;
 

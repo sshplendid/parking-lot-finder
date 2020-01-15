@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import me.shawn.challenge.parkinglotapi.openapi.model.ParkInfoDTO;
 
 import java.util.Comparator;
-import java.util.stream.Stream;
 
 @AllArgsConstructor
 public class DistanceComparator implements Comparator<ParkInfoDTO> {
