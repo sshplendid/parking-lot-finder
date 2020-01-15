@@ -59,10 +59,10 @@
         ></Park>
         <nav aria-label="Page navigation example">
           <ul class="pagination justify-content-center">
-            <li class="page-item" v-bind:class="{'is-first-page': disabled}">
+            <li class="page-item" v-bind:class="{'disabled': isFirstPage}">
               <a class="page-link" href="#" tabindex="-1" aria-disabled="true" v-on:click="previousPage">Previous</a>
             </li>
-            <li class="page-item"  v-bind:class="{'is-last-page': disabled}">
+            <li class="page-item"  v-bind:class="{'disabled': isLastPage}">
               <a class="page-link" href="#" v-on:click="nextPage">Next</a>
             </li>
           </ul>
@@ -151,11 +151,7 @@ export default {
       parkingName: '',
       page: 1,
       pageSize: 5,
-      parkList: [
-        {parkingCode: '123', parkingName: '망원 공영주차장', addr: '마포구 망원동 123', tel: '02-123-4567', parkingFeePerHour: 6000}, 
-        {parkingCode: '223', parkingName: '합정 공영주차장', addr: '마포구 합정동 123', tel: '02-123-4567', parkingFeePerHour: 5000}, 
-        {parkingCode: '323', parkingName: '강남 공영주차장', addr: '강남구 서초동 123', tel: '02-123-4567', parkingFeePerHour: 4000}, 
-      ]
+      parkList: []
     }
   }
 }
