@@ -56,6 +56,15 @@
             v-bind:tel="park.tel"
             v-bind:parking-fee-per-hour="park.parkingFeePerHour"
             v-bind:parkable="park.parkable"
+            v-bind:capacity="park.capacity"
+            v-bind:curParking="park.curParking"
+            v-bind:weekdayBeginTime="park.weekdayBeginTime"
+            v-bind:weekdayEndTime="park.weekdayEndTime"
+            v-bind:weekendBeginTime="park.weekendBeginTime"
+            v-bind:weekendEndTime="park.weekendEndTime"
+            v-bind:lat="park.lat"
+            v-bind:lng="park.lng"
+            v-bind:current-position="currentPosition"
         ></Park>
         <nav aria-label="Page navigation example">
           <ul class="pagination justify-content-center">
@@ -77,6 +86,7 @@
 import Park from './components/Park';
 import NotFound from './components/NotFound';
 import { loadAllParkInfoByAddress } from "./src/ParkStorage";
+import { getCurrentPosition } from "./src/Geo";
 const console = window.console;
 
 const loadParks = function(address, sorter, page, pageSize, tel, parkingName, callback) {
@@ -89,6 +99,10 @@ const loadParks = function(address, sorter, page, pageSize, tel, parkingName, ca
     });
 };
 
+const initPosition = (async () => {
+  return await getCurrentPosition();
+})();
+
 export default {
   name: 'app',
   components: {
@@ -100,6 +114,7 @@ export default {
       this.parkList = data;
       console.log('created hook done.');  
     });
+    this.currentPosition = initPosition;
   },
   computed: {
     notFound: function() {
@@ -151,7 +166,8 @@ export default {
       parkingName: '',
       page: 1,
       pageSize: 5,
-      parkList: []
+      parkList: [],
+      currentPosition: undefined
     }
   }
 }
