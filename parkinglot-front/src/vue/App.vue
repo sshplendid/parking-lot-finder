@@ -2,7 +2,7 @@
   <div id="app" class="container-sm">
     <h1>주차장 검색</h1>
     <div class="container">
-      <form>
+      <!-- <form> -->
         <div class="form-row">
           <div class="col-7 mb-3">
             <label for="validationDefault01">주소</label>
@@ -13,7 +13,7 @@
           </div>
           <div class="col-5 mb-3">
             <label for="validationDefault04">정렬조건</label>
-            <select v-model="sorter" class="custom-select" id="validationDefault04" required>
+            <select v-model="sortType" class="custom-select" id="validationDefault04" required>
               <option value="fee">주차비용</option>
               <option value="distance">거리</option>
             </select>
@@ -43,7 +43,7 @@
           </div>
         </div>
         <button v-on:click="refreshParkInfo" class="btn btn-primary">검색</button>
-      </form>
+      <!-- </form> -->
     </div>
     <div class="container">
       <div v-if="notFound" class="list-group">
@@ -86,11 +86,11 @@
 import Park from './components/Park';
 import NotFound from './components/NotFound';
 import { loadAllParkInfoByAddress } from "./src/ParkStorage";
-import { getCurrentPosition } from "./src/Geo";
+// import { getCurrentPosition } from "./src/Geo";
 const console = window.console;
 
-const loadParks = function(address, sorter, page, pageSize, tel, parkingName, callback) {
-  loadAllParkInfoByAddress(address, sorter, page, pageSize, tel, parkingName)
+const loadParks = function(address, page, pageSize, tel, parkingName, lat, lng, sortType, callback) {
+  loadAllParkInfoByAddress(address, page, pageSize, tel, parkingName, lat, lng, sortType)
     .then(responseData => {
       console.log('fetch done.');
       if(responseData) {
@@ -99,10 +99,6 @@ const loadParks = function(address, sorter, page, pageSize, tel, parkingName, ca
     });
 };
 
-const initPosition = (async () => {
-  return await getCurrentPosition();
-})();
-
 export default {
   name: 'app',
   components: {
@@ -110,11 +106,11 @@ export default {
   },
   created () {
     const address = '마포'
-    loadParks(address, 'fee', 1, 5, undefined, undefined, (data) => {
+    loadParks(address, 1, 5, undefined, undefined, undefined, undefined, 'fee', (data) => {
       this.parkList = data;
       console.log('created hook done.');  
     });
-    this.currentPosition = initPosition;
+    navigator.geolocation.getCurrentPosition(this.setLocation);
   },
   computed: {
     notFound: function() {
@@ -128,6 +124,12 @@ export default {
     },
     isLastPage: function() {
       return this.pageSize > this.parkList.length;
+    },
+    lng: function() {
+      return this.currentPosition.lng;
+    },
+    lat: function() {
+      return this.currentPosition.lat;
     }
   },
   methods: {
@@ -136,7 +138,7 @@ export default {
       this.loadParkInfo();
     },
     loadParkInfo: function() {
-      loadParks(this.address, this.sorter, this.page, this.pageSize, this.tel, this.parkingName, (data) => {
+      loadParks(this.address, this.page, this.pageSize, this.tel, this.parkingName, this.lat, this.lng, this.sortType, (data) => {
         this.parkList = data;
         console.log('Completed to refresh park info.');
       });
@@ -156,12 +158,15 @@ export default {
       }
       this.page = this.page - 1;
       this.loadParkInfo();
+    },
+    setLocation: function(geolocation) {
+      this.currentPosition = {lat: geolocation.coords.latitude, lng: geolocation.coords.longitude};
     }
   },
   data: function() {
     return {
       address: '마포',
-      sorter: 'fee',
+      sortType: 'fee',
       tel: '',
       parkingName: '',
       page: 1,
