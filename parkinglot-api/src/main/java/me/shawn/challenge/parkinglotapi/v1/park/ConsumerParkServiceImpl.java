@@ -4,11 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import me.shawn.challenge.parkinglotapi.openapi.OpenApiConsumer;
 import me.shawn.challenge.parkinglotapi.openapi.model.OpenApiResponse;
 import me.shawn.challenge.parkinglotapi.openapi.model.ParkInfoDTO;
-import me.shawn.challenge.parkinglotapi.v1.park.util.MinPriceParkInfoSorter;
+import me.shawn.challenge.parkinglotapi.v1.park.util.DistanceComparator;
 import me.shawn.challenge.parkinglotapi.v1.park.util.ParkInfoSorter;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,14 +24,42 @@ public class ConsumerParkServiceImpl implements ParkService {
     }
 
     @Override
-    public List<ParkInfoDTO> getParkInfoByAddress(String address, int rowStartAt, int rowEndAt, String ... arg) {
-        // TODO sorter
-        MinPriceParkInfoSorter sorter = new MinPriceParkInfoSorter();
+    public List<ParkInfoDTO> getParkInfoByAddress(String address, int rowStartAt, int rowEndAt, String ... args) {
+        String tel = args.length >= 1 ? args[0] : null;
+        String parkinName = args.length >= 2 ? args[1] : null;
+        final double lat = args.length >= 3 ? Double.parseDouble(args[2]) : -1;
+        final double lng = args.length >= 4 ? Double.parseDouble(args[3]) : -1;
+        String orderBy = args.length >= 5 ? args[4] : null;
 
-        return getParkInfoByAddress(sorter, address, rowStartAt, rowEndAt, arg);
+        boolean orderByDistance = "distance".equals(orderBy);
+
+        final Comparator<ParkInfoDTO> distanceComparator = new DistanceComparator(lat, lng);
+        final Comparator<ParkInfoDTO> priceComparator = Comparator.comparingDouble(ParkInfoDTO::getParkingFeePerHour);
+
+        ParkInfoSorter sorter = parkInfoStream -> parkInfoStream.sorted((a, b) -> {
+            int compared = 0;
+            if(orderByDistance) {
+                // 거리 먼저
+                compared = distanceComparator.compare(a, b);
+                if(compared == 0) {
+                    compared = priceComparator.compare(a, b);
+                }
+            } else {
+                // 주차비용 먼저
+                compared = priceComparator.compare(a, b);
+                if(compared == 0) {
+                    compared = distanceComparator.compare(a, b);
+                }
+            }
+
+            return compared;
+        });
+
+
+        return getParkInfoByAddress(address, rowStartAt, rowEndAt, sorter, tel, parkinName);
     }
-    public List<ParkInfoDTO> getParkInfoByAddress(ParkInfoSorter sorter, String address, int rowStartAt, int rowEndAt, String ... arg) {
-        log.info("=> getParkInfoByAddress({}, {}, {}, {}, {})", address, rowStartAt, rowEndAt, arg.length>=1? arg[0]:null, arg.length>=2? arg[1]:null);
+    public List<ParkInfoDTO> getParkInfoByAddress(String address, int rowStartAt, int rowEndAt, ParkInfoSorter sorter, String tel, String parkingName) {
+        log.info("=> getParkInfoByAddress({}, {}, {}, {}, {})", address, rowStartAt, rowEndAt, tel, parkingName);
         List<ParkInfoDTO> totalList = new ArrayList<>();
 
         int i = 0;
@@ -42,14 +71,14 @@ public class ConsumerParkServiceImpl implements ParkService {
 
             totalList.addAll(response.getData().stream()
                     .filter(info -> {
-                        if(arg.length >= 1 && arg[0] != null) {
-                            return arg[0].equals(info.getTel());
+                        if(tel != null) {
+                            return tel.equals(info.getTel());
                         }
                         return true;
                     })
                     .filter(info -> {
-                        if(arg.length >= 2 && arg[1] != null) {
-                            return info.getParkingName().contains(arg[1]);
+                        if(parkingName != null) {
+                            return info.getParkingName().contains(parkingName);
                         }
                         return true;
                     })

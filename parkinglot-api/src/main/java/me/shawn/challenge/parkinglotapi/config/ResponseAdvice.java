@@ -14,7 +14,11 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.joining;
 
 @Slf4j
 @ControllerAdvice
@@ -27,6 +31,10 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
     @ExceptionHandler(value = {Throwable.class})
     public CommonResponse error(Throwable t) {
         log.error("에러 발생: {}", t.getMessage());
+        log.error(Arrays.stream(t.getStackTrace())
+                .map(StackTraceElement::toString)
+                .collect(joining("\n")));
+
         return CommonResponse.builder()
                 .status("ERROR")
                 .message("에러가 발생했습니다.")
