@@ -10,9 +10,9 @@
     * [x] 정렬 기능 구현
       * [x] 최소비용
       * [x] 최단거리
-  * [ ] 주차장 정보 DB 저장
-    * [ ] 전체 데이터 저장 (Refresh)
-      * [ ] Quartz로 분 단위 최신화
+  * [ ] ~~주차장 정보 DB 저장~~
+    * [ ] ~~전체 데이터 저장 (Refresh)~~
+      * [ ] ~~Quartz로 분 단위 최신화~~
 * Front 애플리케이션
   * [x] 프로젝트 구성
   * [x] UI 구성
@@ -58,11 +58,25 @@ $ ./gradlew proxy:bootRun            # 프록시 애플리케이션 실행
 
 도커 이미지는 그래들 빌드 (`gradle - bootJar`) 후에 생성된 jar 파일을 기반으로 생성할 수 있습니다.
 
+#### 도커 이미지 빌드
+
 ```console
-$ ./gradlew bootJar
-$ docker build . --tag parkinglot:0.1
-$ docker run -p 8080:8080 parkinglot:0.1
+$ ./gradlew bootJar # bootJar 생성
+
+$ docker build ./parkinglot-front --tag park-front:0.1 # 프론트 애플리케이션 이미지 빌드
+$ docker build ./parkinglot-api --tag park-api:0.1 # API 애플리케이션 이미지 빌드
+$ docker build ./proxy --tag park-proxy:0.1 # Proxy 애플리케이션 이미지 빌드
+$ docker run -p 8080:8080 parkinglot:0.1 
 ```
+
+##### 도커 컴포즈를 통한 애플리케이션 실행 (WIP)
+
+> 작업중
+
+```console
+$ docker-compose up
+```
+
 
 ### API 문서 생성
 
