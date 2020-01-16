@@ -2,7 +2,7 @@
   <div id="app" class="container-sm">
     <h1>주차장 검색</h1>
     <div class="container">
-      <form>
+      <!-- <form> -->
         <div class="form-row">
           <div class="col-7 mb-3">
             <label for="validationDefault01">주소</label>
@@ -13,7 +13,7 @@
           </div>
           <div class="col-5 mb-3">
             <label for="validationDefault04">정렬조건</label>
-            <select v-model="sorter" class="custom-select" id="validationDefault04" required>
+            <select v-model="sortType" class="custom-select" id="validationDefault04" required>
               <option value="fee">주차비용</option>
               <option value="distance">거리</option>
             </select>
@@ -43,7 +43,7 @@
           </div>
         </div>
         <button v-on:click="refreshParkInfo" class="btn btn-primary">검색</button>
-      </form>
+      <!-- </form> -->
     </div>
     <div class="container">
       <div v-if="notFound" class="list-group">
@@ -56,13 +56,22 @@
             v-bind:tel="park.tel"
             v-bind:parking-fee-per-hour="park.parkingFeePerHour"
             v-bind:parkable="park.parkable"
+            v-bind:capacity="park.capacity"
+            v-bind:curParking="park.curParking"
+            v-bind:weekdayBeginTime="park.weekdayBeginTime"
+            v-bind:weekdayEndTime="park.weekdayEndTime"
+            v-bind:weekendBeginTime="park.weekendBeginTime"
+            v-bind:weekendEndTime="park.weekendEndTime"
+            v-bind:lat="park.lat"
+            v-bind:lng="park.lng"
+            v-bind:current-position="currentPosition"
         ></Park>
         <nav aria-label="Page navigation example">
           <ul class="pagination justify-content-center">
-            <li class="page-item" v-bind:class="{'is-first-page': disabled}">
+            <li class="page-item" v-bind:class="{'disabled': isFirstPage}">
               <a class="page-link" href="#" tabindex="-1" aria-disabled="true" v-on:click="previousPage">Previous</a>
             </li>
-            <li class="page-item"  v-bind:class="{'is-last-page': disabled}">
+            <li class="page-item"  v-bind:class="{'disabled': isLastPage}">
               <a class="page-link" href="#" v-on:click="nextPage">Next</a>
             </li>
           </ul>
@@ -77,10 +86,11 @@
 import Park from './components/Park';
 import NotFound from './components/NotFound';
 import { loadAllParkInfoByAddress } from "./src/ParkStorage";
+// import { getCurrentPosition } from "./src/Geo";
 const console = window.console;
 
-const loadParks = function(address, sorter, page, pageSize, tel, parkingName, callback) {
-  loadAllParkInfoByAddress(address, sorter, page, pageSize, tel, parkingName)
+const loadParks = function(address, page, pageSize, tel, parkingName, lat, lng, sortType, callback) {
+  loadAllParkInfoByAddress(address, page, pageSize, tel, parkingName, lat, lng, sortType)
     .then(responseData => {
       console.log('fetch done.');
       if(responseData) {
@@ -96,10 +106,11 @@ export default {
   },
   created () {
     const address = '마포'
-    loadParks(address, 'fee', 1, 5, undefined, undefined, (data) => {
+    loadParks(address, 1, 5, undefined, undefined, undefined, undefined, 'fee', (data) => {
       this.parkList = data;
       console.log('created hook done.');  
     });
+    navigator.geolocation.getCurrentPosition(this.setLocation);
   },
   computed: {
     notFound: function() {
@@ -113,6 +124,12 @@ export default {
     },
     isLastPage: function() {
       return this.pageSize > this.parkList.length;
+    },
+    lng: function() {
+      return this.currentPosition.lng;
+    },
+    lat: function() {
+      return this.currentPosition.lat;
     }
   },
   methods: {
@@ -121,7 +138,7 @@ export default {
       this.loadParkInfo();
     },
     loadParkInfo: function() {
-      loadParks(this.address, this.sorter, this.page, this.pageSize, this.tel, this.parkingName, (data) => {
+      loadParks(this.address, this.page, this.pageSize, this.tel, this.parkingName, this.lat, this.lng, this.sortType, (data) => {
         this.parkList = data;
         console.log('Completed to refresh park info.');
       });
@@ -141,21 +158,21 @@ export default {
       }
       this.page = this.page - 1;
       this.loadParkInfo();
+    },
+    setLocation: function(geolocation) {
+      this.currentPosition = {lat: geolocation.coords.latitude, lng: geolocation.coords.longitude};
     }
   },
   data: function() {
     return {
       address: '마포',
-      sorter: 'fee',
+      sortType: 'fee',
       tel: '',
       parkingName: '',
       page: 1,
       pageSize: 5,
-      parkList: [
-        {parkingCode: '123', parkingName: '망원 공영주차장', addr: '마포구 망원동 123', tel: '02-123-4567', parkingFeePerHour: 6000}, 
-        {parkingCode: '223', parkingName: '합정 공영주차장', addr: '마포구 합정동 123', tel: '02-123-4567', parkingFeePerHour: 5000}, 
-        {parkingCode: '323', parkingName: '강남 공영주차장', addr: '강남구 서초동 123', tel: '02-123-4567', parkingFeePerHour: 4000}, 
-      ]
+      parkList: [],
+      currentPosition: undefined
     }
   }
 }

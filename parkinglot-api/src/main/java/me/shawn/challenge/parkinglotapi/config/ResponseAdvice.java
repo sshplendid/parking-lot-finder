@@ -2,7 +2,6 @@ package me.shawn.challenge.parkinglotapi.config;
 
 import lombok.extern.slf4j.Slf4j;
 import me.shawn.challenge.parkinglotapi.model.CommonResponse;
-import me.shawn.challenge.parkinglotapi.model.ErrorMessage;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -10,11 +9,13 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import static java.util.stream.Collectors.joining;
 
 @Slf4j
 @ControllerAdvice
@@ -27,6 +28,10 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
     @ExceptionHandler(value = {Throwable.class})
     public CommonResponse error(Throwable t) {
         log.error("에러 발생: {}", t.getMessage());
+        log.error(Arrays.stream(t.getStackTrace())
+                .map(StackTraceElement::toString)
+                .collect(joining("\n")));
+
         return CommonResponse.builder()
                 .status("ERROR")
                 .message("에러가 발생했습니다.")

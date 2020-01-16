@@ -11,9 +11,9 @@ function makeQueryString(obj) {
 }
 
 module.exports = {
-  loadAllParkInfoByAddress: async function(addr, sorter, page, pagesize, tel, parkingName) {
+  loadAllParkInfoByAddress: async function(addr, page, pagesize, tel, parkingName, lat, lng, sortType) {
     console.log(`=> Trying to load park info. address: '${addr}'`);
-    const queryString = makeQueryString({page, pagesize, tel, parkingName});
+    const queryString = makeQueryString({page, pagesize, tel, parkingName, lat, lng, sortType});
     const url = `${endpoint}/api/parks/${encodeURI(addr)}?${queryString}`;
     console.log(`url: ${url}`);
     const response = await fetch(url);

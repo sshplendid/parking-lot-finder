@@ -61,6 +61,9 @@ public class ParkInfoDTO {
      * @return 시간당 주차요금
      */
     public double getParkingFeePerHour() {
+        if(rates == 0) {
+            return 0;
+        }
         double extraFee = addRates > 0 ? addRates : rates;
         double times = (60 - timeRate) / (addTimeRate > 0 ? addTimeRate : timeRate);
         return rates + (times * extraFee);
@@ -95,9 +98,9 @@ public class ParkInfoDTO {
     private boolean isParkableWeekday(LocalDateTime parkDateTime) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HHmm");
         int openHour = Integer.parseInt(this.weekdayBeginTime.substring(0, 2));
-        int closeHour = Integer.parseInt(this.weekendEndTime.substring(0, 2));
+        int closeHour = Integer.parseInt(this.weekdayEndTime.substring(0, 2));
         LocalTime openAt = LocalTime.of(openHour > 23? 0 : openHour, Integer.parseInt(this.weekdayBeginTime.substring(2)));
-        LocalTime closeAt = LocalTime.of(closeHour > 23? 0 : closeHour, Integer.parseInt(this.weekdayEndTime.substring(2)));
+        LocalTime closeAt = closeHour == 24 ? LocalTime.MAX : LocalTime.of(closeHour, Integer.parseInt(this.weekdayEndTime.substring(2)));
 
         return this.isEnoughCapacity() && parkDateTime.toLocalTime().isAfter(openAt) && parkDateTime.toLocalTime().isBefore(closeAt);
     }
@@ -106,8 +109,8 @@ public class ParkInfoDTO {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HHmm");
         int openHour = Integer.parseInt(this.weekendBeginTime.substring(0, 2));
         int closeHour = Integer.parseInt(this.weekendEndTime.substring(0, 2));
-        LocalTime openAt = LocalTime.of(openHour > 23? 0 : openHour, Integer.parseInt(this.weekdayBeginTime.substring(2)));
-        LocalTime closeAt = LocalTime.of(closeHour > 23? 0 : closeHour, Integer.parseInt(this.weekendEndTime.substring(2)));
+        LocalTime openAt = LocalTime.of(openHour > 23? 0 : openHour, Integer.parseInt(this.weekendBeginTime.substring(2)));
+        LocalTime closeAt = closeHour == 24 ? LocalTime.MAX : LocalTime.of(closeHour, Integer.parseInt(this.weekendEndTime.substring(2)));
 
         return this.isEnoughCapacity() && parkDateTime.toLocalTime().isAfter(openAt) && parkDateTime.toLocalTime().isBefore(closeAt);
     }
