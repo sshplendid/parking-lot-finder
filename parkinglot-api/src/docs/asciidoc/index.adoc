@@ -16,28 +16,6 @@ sshplendid.github.io
 [[common]]
 == 공통 사항
 
-=== Domain
-
-|===
-| 환경 | domain
-
-| 개발서버
-| `dev.sshplendid.github.io`
-
-| 운영서버
-| `sshplendid.github.io`
-|===
-
-
-=== Header
-
-|===
-| name | 설명
-
-| `Authorization`
-| API를 사용하기 위한 인증 키
-|===
-
 === 공통 Response Body
 
 |===
