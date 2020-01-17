@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
-// const endpoint = this.document.location.origin;
-const endpoint = 'http://localhost:8000';
+const endpoint = document.location.origin;
+// const endpoint = 'http://localhost:8000';
 const console = window.console;
 
 function makeQueryString(obj) {

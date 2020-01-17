@@ -8,6 +8,10 @@ module.exports = {
     outputDir: __dirname + '/src/main/resources/static',
     indexPath: __dirname + '/src/main/resources/static/index.html',
     devServer: {
-        port: 8001
+        host: '0.0.0.0',
+        port: 8001,
+        disableHostCheck: true,
+        public: 'localhost:80'
     }
-}
+};
+
