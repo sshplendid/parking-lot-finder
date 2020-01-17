@@ -1,12 +1,18 @@
-
+server:
+  port: 80
+logging:
+  level:
+    org.springframework.web: debug
 spring:
-#  jmx:
-#    enabled: false
+  profiles:
+    active: docker
+---
+
+# Local
+spring:
+  profiles: local
   cloud:
     gateway:
-#      default-filters:
-#        - PrefixPath=/httpbin
-#        - AddResponseHeader=X-Response-Default-Foo, Default-Bar
       routes:
         - id: api
           uri: http://localhost:8080
@@ -18,5 +24,20 @@ spring:
           order: 10000
           predicates:
             - Path=/front/**
-server:
-  port: 8000
+
+---
+spring:
+  profiles: docker
+  cloud:
+    gateway:
+      routes:
+        - id: api
+          uri: http://api:8080
+          order: 10000
+          predicates:
+            - Path=/api/**
+        - id: front
+          uri: http://front:8001
+          order: 10000
+          predicates:
+            - Path=/front/**
