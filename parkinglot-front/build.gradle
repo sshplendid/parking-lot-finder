@@ -17,9 +17,17 @@ dependencies {
 task vuecliSetup(type: YarnTask, dependsOn: 'yarn') {
     args = ['global', 'add', '@vue/cli']
 }
+// build dev
+task webpack(type: YarnTask, dependsOn: 'yarnSetup') {
+    args = ['run', 'build:dev']
+}
+/*
+ * Build production
 task webpack(type: YarnTask, dependsOn: 'yarnSetup') {
     args = ['run', 'build']
 }
+ */
+
 
 bootJar {
     mainClassName = 'me.shawn.challenge.parkinglotfront.FrontApplication'
