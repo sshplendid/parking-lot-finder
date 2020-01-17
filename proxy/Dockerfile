@@ -11,4 +11,4 @@ ARG JAR_FILE=build/libs/proxy-0.0.1-SNAPSHOT.jar
 ADD ${JAR_FILE} springboot-app.jar
 
 # Run the jar file
-ENTRYPOINT ["java", "-jar", "/springboot-app.jar"]
+ENTRYPOINT ["java", "-jar", "/springboot-app.jar", "-Dspring.profiles.active=docker"]
