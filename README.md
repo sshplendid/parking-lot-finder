@@ -36,11 +36,11 @@
 ## 기본사항
 
 * 서버 포트
-  * 프록시: 8000 포트를 사용합니다.
+  * 프록시: 80 포트를 사용합니다.
   * API: 8080 포트를 사용합니다.
   * Front: 8001 포트를 사용합니다.
 
-* 웹사이트 엔트리: http://localhost:8000/front
+* 웹사이트 엔트리: http://localhost:80/front/
 
 ## 사용방법
 
@@ -66,12 +66,14 @@ $ ./gradlew bootJar # bootJar 생성
 $ docker build ./parkinglot-front --tag park-front:0.1 # 프론트 애플리케이션 이미지 빌드
 $ docker build ./parkinglot-api --tag park-api:0.1 # API 애플리케이션 이미지 빌드
 $ docker build ./proxy --tag park-proxy:0.1 # Proxy 애플리케이션 이미지 빌드
-$ docker run -p 8080:8080 parkinglot:0.1 
+$ docker run -p 8080:8080 park-api:0.1 
+$ docker run -p 8001:8001 park-front:0.1 
+$ docker run -p 80:80 park-proxy:0.1 
 ```
 
 ##### 도커 컴포즈를 통한 애플리케이션 실행 (WIP)
 
-> 작업중
+도커 컴포즈 명령으로 애플리케이션을 실행한다.
 
 ```console
 $ docker-compose up
