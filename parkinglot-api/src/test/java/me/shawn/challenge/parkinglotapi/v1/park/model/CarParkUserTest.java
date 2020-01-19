@@ -22,7 +22,6 @@ class CarParkUserTest {
     void setUp() {
         Configuration<?> configuration = Validation
                 .byDefaultProvider()
-//                .providerResolver(new CarParkUser())
                 .configure();
         ValidatorFactory factory = configuration.buildValidatorFactory();
         this.validator = factory.getValidator();
@@ -171,8 +170,39 @@ class CarParkUserTest {
         assertThat(user.getPageSize()).isEqualTo(5);
     }
 
+    @Test
+    void latitude_범위를벗어난값이들어오면_밸리데이션에러가발생한다() {
+        // GIVEN
+        double wrongLatitude = -210;
+
+        // WHEN
+        user = new CarParkUser(LocalDateTime.now(), "마포구", 1, 5, "공영주차장", "123-345-1234", wrongLatitude, 1d);
+        Set<ConstraintViolation<CarParkUser>> violations = validator.validate(user);
+        violations.forEach(violation -> log.error("\tViolation: {} - '{}'", violation.getMessage(), violation.getInvalidValue()));
+
+        // THEN
+        assertThat(violations).hasSize(1);
+        user = null;
+    }
+
+    @Test
+    void logitude_범위를벗어난값이들어오면_밸리데이션에러가발생한다() {
+        // GIVEN
+        double wrongLongitude = -210;
+
+        // WHEN
+        user = new CarParkUser(LocalDateTime.now(), "마포구", 1, 5, "공영주차장", "123-345-1234", 38.12345, wrongLongitude);
+        Set<ConstraintViolation<CarParkUser>> violations = validator.validate(user);
+        violations.forEach(violation -> log.error("\tViolation: {} - '{}'", violation.getMessage(), violation.getInvalidValue()));
+
+        // THEN
+        assertThat(violations).hasSize(1);
+        user = null;
+    }
+
+
     @AfterEach
-    void tearDown() {
+    void tearDown_user가null이아니면_밸리데이션을수행한다() {
         if(user == null) return;
 
         Set<ConstraintViolation<CarParkUser>> violations = validator.validate(user);
@@ -188,6 +218,9 @@ class CarParkUserTest {
         String telephone = "031-200-1234";
 
         // WHEN
-        Pattern.matches("((\\d+)\\-?)+", telephone);
+        boolean result = Pattern.matches("((\\d+)\\-?)+", telephone);
+
+        // THEN
+        assertThat(result).isTrue();
     }
 }
