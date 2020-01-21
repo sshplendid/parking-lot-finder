@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.shawn.challenge.parkinglotapi.openapi.OpenApiConsumer;
 import me.shawn.challenge.parkinglotapi.openapi.model.OpenApiResponse;
 import me.shawn.challenge.parkinglotapi.openapi.model.ParkInfoDTO;
+import me.shawn.challenge.parkinglotapi.v1.park.model.CarParkUser;
 import me.shawn.challenge.parkinglotapi.v1.park.util.DistanceComparator;
 import me.shawn.challenge.parkinglotapi.v1.park.util.ParkInfoSorter;
 import org.springframework.stereotype.Service;
@@ -58,6 +59,15 @@ public class ConsumerParkServiceImpl implements ParkService {
 
         return getParkInfoByAddress(address, rowStartAt, rowEndAt, sorter, tel, parkinName);
     }
+
+    @Override
+    public List<ParkInfoDTO> getParkInfoByAddress(CarParkUser carParkUser) {
+        int rowStartAt = (carParkUser.getPage() - 1) * carParkUser.getPageSize() + 1;
+        int rowEndAt = carParkUser.getPage() * carParkUser.getPageSize();
+//        return parkService.getParkInfoByAddress(address, rowStartAt, rowEndAt, tel, parkingName, lat, lng, sortType);
+        return this.getParkInfoByAddress(carParkUser.getAddress(), rowStartAt, rowEndAt, carParkUser.getTelephone(), carParkUser.getCarParkName(), carParkUser.getLatitude(), carParkUser.getLongitude(), So);
+    }
+
     public List<ParkInfoDTO> getParkInfoByAddress(String address, int rowStartAt, int rowEndAt, ParkInfoSorter sorter, String tel, String parkingName) {
         log.info("=> getParkInfoByAddress({}, {}, {}, {}, {})", address, rowStartAt, rowEndAt, tel, parkingName);
         List<ParkInfoDTO> totalList = new ArrayList<>();

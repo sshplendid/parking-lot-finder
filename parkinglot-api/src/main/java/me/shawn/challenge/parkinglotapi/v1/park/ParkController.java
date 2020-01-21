@@ -1,8 +1,10 @@
 package me.shawn.challenge.parkinglotapi.v1.park;
 
 import me.shawn.challenge.parkinglotapi.openapi.model.ParkInfoDTO;
+import me.shawn.challenge.parkinglotapi.v1.park.model.CarParkUser;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -31,5 +33,11 @@ public class ParkController {
 
         return parkService.getParkInfoByAddress(address, rowStartAt, rowEndAt, tel, parkingName, lat, lng, sortType);
     }
+
+    @GetMapping("/{address}")
+    public List<ParkInfoDTO> getParkingLotByAddress2(@Valid CarParkUser carParkUser) {
+        return parkService.getParkInfoByAddress(carParkUser);
+    }
+
 
 }

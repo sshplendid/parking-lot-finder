@@ -1,6 +1,7 @@
 package me.shawn.challenge.parkinglotapi.v1.park;
 
 import me.shawn.challenge.parkinglotapi.openapi.model.ParkInfoDTO;
+import me.shawn.challenge.parkinglotapi.v1.park.model.CarParkUser;
 
 import java.util.List;
 
@@ -15,4 +16,6 @@ public interface ParkService {
      * @return 검색조건과 일치하는 결과를 리턴한다.
      */
     List<ParkInfoDTO> getParkInfoByAddress(String address, int rowStartAt, int rowEndAt, String ... arg);
+
+    List<ParkInfoDTO> getParkInfoByAddress(CarParkUser carParkUser);
 }
