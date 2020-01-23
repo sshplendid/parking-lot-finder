@@ -7,25 +7,32 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.StopWatch;
 import org.springframework.web.client.RestTemplate;
 
-import javax.naming.SizeLimitExceededException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SpringBootTest
 class ConsumerParkServiceImplTest {
     private static final Logger log = LoggerFactory.getLogger(ConsumerParkServiceImplTest.class);
     private StopWatch stopWatch;
 
     private ParkService parkService;
 
+    @Value("${common.open-api.endpoint:}")
+    private String endpoint;
+    @Value("${common.open-api.token:}")
+    private String token;
+
     @BeforeEach
     void setUp() {
-        String endpoint = "http://openapi.seoul.go.kr:8088";
-        String token = "6a756259796a756d32304559665677";
+//        String endpoint = "http://openapi.seoul.go.kr:8088";
+//        String token = "546b436f646a756d383078644e6d54";
         RestTemplate restTemplate = new RestTemplate();
 
         OpenApiConsumer openApiConsumer = new OpenApiConsumer(restTemplate, token, endpoint);

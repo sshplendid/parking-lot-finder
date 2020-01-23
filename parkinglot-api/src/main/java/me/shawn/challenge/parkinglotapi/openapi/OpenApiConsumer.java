@@ -7,12 +7,12 @@ import me.shawn.challenge.parkinglotapi.openapi.model.OpenApiStatus;
 import me.shawn.challenge.parkinglotapi.openapi.model.ParkInfoDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import javax.naming.SizeLimitExceededException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -77,8 +77,11 @@ public class OpenApiConsumer {
             query2 = EMPTY;
         }
 
-        log.info("Trying to request: /{}/json/{}/{}/{}/{}", apiToken, rowStartAt, rowEndAt, query1, query2);
-        ResponseEntity<Map> responseEntity = restTemplate.exchange(apiEndpoint + API_PATH, HttpMethod.GET, null, Map.class, apiToken, apiName, rowStartAt, rowEndAt, query1, query2);
+        log.info("Trying to request: {}/{}/json/{}/{}/{}/{}", apiEndpoint, apiToken, rowStartAt, rowEndAt, query1, query2);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        HttpEntity<String> httpEntity = new HttpEntity<>(null, headers);
+        ResponseEntity<Map> responseEntity = restTemplate.exchange(apiEndpoint + API_PATH, HttpMethod.GET, httpEntity, Map.class, apiToken, apiName, rowStartAt, rowEndAt, query1, query2);
 //        log.info("api result: {}", responseEntity.getBody().toString());
 
         if(responseEntity.getBody() != null && responseEntity.getBody().containsKey(RESULT) ) {

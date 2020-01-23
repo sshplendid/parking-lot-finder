@@ -2,6 +2,7 @@ package me.shawn.challenge.parkinglotapi.v1.park.util;
 
 import lombok.AllArgsConstructor;
 import me.shawn.challenge.parkinglotapi.openapi.model.ParkInfoDTO;
+import me.shawn.challenge.parkinglotapi.v1.park.model.CarParkUser;
 
 import java.util.Comparator;
 
@@ -10,6 +11,11 @@ public class DistanceComparator implements Comparator<ParkInfoDTO> {
 
     private final double lat;
     private final double lng;
+
+    public DistanceComparator(CarParkUser carParkUser) {
+        this.lat = carParkUser.getLatitude();
+        this.lng = carParkUser.getLongitude();
+    }
 
     @Override
     public int compare(ParkInfoDTO a, ParkInfoDTO b) {

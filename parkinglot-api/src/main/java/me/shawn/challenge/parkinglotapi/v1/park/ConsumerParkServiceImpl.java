@@ -5,8 +5,7 @@ import me.shawn.challenge.parkinglotapi.openapi.OpenApiConsumer;
 import me.shawn.challenge.parkinglotapi.openapi.model.OpenApiResponse;
 import me.shawn.challenge.parkinglotapi.openapi.model.ParkInfoDTO;
 import me.shawn.challenge.parkinglotapi.v1.park.model.CarParkUser;
-import me.shawn.challenge.parkinglotapi.v1.park.util.DistanceComparator;
-import me.shawn.challenge.parkinglotapi.v1.park.util.ParkInfoSorter;
+import me.shawn.challenge.parkinglotapi.v1.park.util.*;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,6 +23,7 @@ public class ConsumerParkServiceImpl implements ParkService {
         this.openApiConsumer = openApiConsumer;
     }
 
+    @Deprecated
     @Override
     public List<ParkInfoDTO> getParkInfoByAddress(String address, int rowStartAt, int rowEndAt, String ... args) {
         String tel = args.length >= 1 ? args[0] : null;
@@ -62,10 +62,22 @@ public class ConsumerParkServiceImpl implements ParkService {
 
     @Override
     public List<ParkInfoDTO> getParkInfoByAddress(CarParkUser carParkUser) {
+        log.info("carParkUser: {}", carParkUser);
         int rowStartAt = (carParkUser.getPage() - 1) * carParkUser.getPageSize() + 1;
         int rowEndAt = carParkUser.getPage() * carParkUser.getPageSize();
-//        return parkService.getParkInfoByAddress(address, rowStartAt, rowEndAt, tel, parkingName, lat, lng, sortType);
-        return this.getParkInfoByAddress(carParkUser.getAddress(), rowStartAt, rowEndAt, carParkUser.getTelephone(), carParkUser.getCarParkName(), carParkUser.getLatitude(), carParkUser.getLongitude(), So);
+        ParkInfoSorter sorter = this.getParkInfoSorter(carParkUser);
+
+        return this.getParkInfoByAddress(carParkUser.getAddress(), rowStartAt, rowEndAt, sorter, carParkUser.getTelephone(), carParkUser.getCarParkName());
+    }
+
+    private ParkInfoSorter getParkInfoSorter(CarParkUser carParkUser) {
+        PriceComparator priceComparator = new PriceComparator();
+        DistanceComparator distanceComparator = new DistanceComparator(carParkUser);
+
+        if (CarParkUser.isOrderByMinPrice(carParkUser)) {
+            return new MinPriceSorter(distanceComparator, priceComparator);
+        }
+        return new MinDistanceSorter(distanceComparator, priceComparator);
     }
 
     public List<ParkInfoDTO> getParkInfoByAddress(String address, int rowStartAt, int rowEndAt, ParkInfoSorter sorter, String tel, String parkingName) {

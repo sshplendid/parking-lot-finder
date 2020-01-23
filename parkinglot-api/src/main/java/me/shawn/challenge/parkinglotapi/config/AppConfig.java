@@ -1,5 +1,6 @@
 package me.shawn.challenge.parkinglotapi.config;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -24,5 +25,10 @@ public class AppConfig {
         restTemplate.setMessageConverters(messageConverters);
 
         return restTemplate;
+    }
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 }

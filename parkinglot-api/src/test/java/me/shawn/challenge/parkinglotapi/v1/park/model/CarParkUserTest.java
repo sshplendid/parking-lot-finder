@@ -114,7 +114,7 @@ class CarParkUserTest {
         user = new CarParkUser(LocalDateTime.now(), "마포구", 1, 5, "공영주차장", givenNumber, 1d, 1d);
 
         // WHEN
-        String actualTelephoneNumber = user.getTelephoneOnlyNumber();
+        String actualTelephoneNumber = user.getOnlyTelephoneNumber();
         log.info("Actual Tel. : {}", actualTelephoneNumber);
 
         // THEN
@@ -130,7 +130,7 @@ class CarParkUserTest {
         user = new CarParkUser(LocalDateTime.now(), "마포구", 1, 5, "공영주차장", givenNumber, 1d, 1d);
 
         // WHEN
-        String actualTelephoneNumber = user.getTelephoneOnlyNumber();
+        String actualTelephoneNumber = user.getOnlyTelephoneNumber();
         log.info("Actual Tel. : {}", actualTelephoneNumber);
 
         // THEN
@@ -146,7 +146,7 @@ class CarParkUserTest {
         user = new CarParkUser(LocalDateTime.now(), "마포구", 1, 5, "공영주차장", givenNumber, 1d, 1d);
 
         // WHEN
-        String actualTelephoneNumber = user.getTelephoneOnlyNumber();
+        String actualTelephoneNumber = user.getOnlyTelephoneNumber();
         log.info("Actual Tel. : {}", actualTelephoneNumber);
 
         // THEN

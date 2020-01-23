@@ -7,28 +7,30 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StopWatch;
 import org.springframework.web.client.RestTemplate;
 
-import javax.naming.SizeLimitExceededException;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-
+@SpringBootTest
 public class OpenApiConsumerTest {
     private static final Logger log = LoggerFactory.getLogger(OpenApiConsumerTest.class);
 
     private OpenApiConsumer openApiConsumer;
     private RestTemplate restTemplate;
-    private static final String END_POINT = "http://openapi.seoul.go.kr:8088";
-    private static final String TOKEN = "6a756259796a756d32304559665677";
+    @Value("${common.open-api.endpoint:}")
+    private String endpoint;
+    @Value("${common.open-api.token:}")
+    private String token;
 
     @BeforeEach
     void setUp() {
         restTemplate = new RestTemplate();
-        openApiConsumer = new OpenApiConsumer(restTemplate, TOKEN, END_POINT);
+        openApiConsumer = new OpenApiConsumer(restTemplate, token, endpoint);
     }
 
     @Test
@@ -99,7 +101,7 @@ public class OpenApiConsumerTest {
     @Test
     void parkingCodeTest() {
         // GIVEN
-        String parkingCode = "1033754";
+        String parkingCode = "1027845";
 
         // WHEN
         OpenApiResponse response = openApiConsumer.getParkInfoByParkingCode(parkingCode);

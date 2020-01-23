@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class DistanceComparatorTest {
 
@@ -45,7 +44,7 @@ class DistanceComparatorTest {
         list.add(nosang);
 
         // WHEN
-        List sortedList = list.stream()
+        List<ParkInfoDTO> sortedList = list.stream()
                 .sorted(distanceComparator)
                 .collect(Collectors.toList());
 

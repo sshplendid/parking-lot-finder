@@ -13,6 +13,7 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
@@ -24,6 +25,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -52,7 +54,7 @@ class ParkControllerTest {
     }
 
     @Test
-    void getAllParkingLotsByAddress() throws Exception {
+    void getAllParkingLotsByAddress_ApiDoc() throws Exception {
         // GIVEN
         String address = "마포";
 
@@ -132,6 +134,40 @@ class ParkControllerTest {
                                 fieldWithPath("data[].assignCodeNm").description("배정코드명")
                         )
                 ))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getAllParkingLotsByAddress_withCarParkName() throws Exception {
+        // GIVEN
+        String address = "은평";
+
+        // WHEN and THEN
+        mockMvc.perform(get("/parks/{address}", address)
+                .accept(MediaType.APPLICATION_JSON)
+                .param("page", "1")
+                .param("pageSize", "15")
+                .param("carParkName", "연광초교지하공동주차장"))
+                .andDo(print())
+                .andExpect(jsonPath("$.size").value(1))
+                .andExpect(jsonPath("$.data[0].parkingCode").value("1051018"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getAllParkingLotsByAddress_withTelephone() throws Exception {
+        // GIVEN
+        String address = "은평";
+
+        // WHEN and THEN
+        mockMvc.perform(get("/parks/{address}", address)
+                .accept(MediaType.APPLICATION_JSON)
+                .param("page", "1")
+                .param("pageSize", "15")
+                .param("telephone", "010-9554-9016"))
+                .andDo(print())
+                .andExpect(jsonPath("$.size").value(1))
+                .andExpect(jsonPath("$.data[0].parkingCode").value("1051018"))
                 .andExpect(status().isOk());
     }
 }

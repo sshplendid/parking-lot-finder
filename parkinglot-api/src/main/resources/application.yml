@@ -11,7 +11,7 @@ server:
 common:
   open-api:
     endpoint: http://openapi.seoul.go.kr:8088
-    token: 6a756259796a756d32304559665677
+    token: 546b436f646a756d383078644e6d54
 ---
 # Local
 
